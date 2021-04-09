@@ -1,0 +1,45 @@
+AllCops:
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  Exclude:
+    - 'bin/*'
+    - '**/node_modules/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - '.git/**/*'
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/LambdaCall:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/BlockDelimiters:
+  IgnoredMethods: [lambda, proc, it, expect]
+
+Lint/UselessAccessModifier:
+  MethodCreatingMethods: [delegate]
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Layout/EmptyLineBetweenDefs:
+  AllowAdjacentOneLineDefs: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - '**/spec/**/*.rb'
