@@ -14,7 +14,7 @@ module Realm
         protected
 
         def use_repo(*names, readonly: self < Realm::QueryHandler)
-          raise OnlyOneWriteRepo if !readonly && (names.size > 1 || @write_repo_injected)
+          raise OnlyOneWriteRepo if !readonly && (names.size > 1 || defined?(@write_repo_injected))
 
           names << default_repo_name if names.empty?
           names.each { |name| inject_repo(name, readonly) }

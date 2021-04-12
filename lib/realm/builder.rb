@@ -24,7 +24,7 @@ module Realm
       option :engine_class,         default: proc { "#{@root_module}::Engine" }
       option :engine_path,          default: proc { constantize(@engine_class)&.root }
       option :domain_resolver,      default: proc { constantize(@domain_module)&.then { |m| DomainResolver.new(m) } }
-      option :logger,               default: proc { defined?(Rails) ? Rails.logger : Logger.new($stdout) }
+      option :logger,               default: proc { nil }
       option :dependencies,         default: proc { {} }
       option :job_scheduler,        default: proc { {} }
       option :persistence_gateway,  default: proc { @database_url && { url: @database_url } }
@@ -87,6 +87,14 @@ module Realm
         repos_module: "#{@root_module}::Repositories",
         migration_path: @engine_path && "#{@engine_path}/db/migrate",
       }
+    end
+
+    def logger
+      return @logger if @logger
+
+      return Rails.logger if defined?(Rails)
+
+      @logger = Logger.new($stdout, level: ENV.fetch('LOG_LEVEL', :info).to_sym)
     end
   end
 end

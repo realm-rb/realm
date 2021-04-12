@@ -16,11 +16,12 @@ module Realm
             define_method(name) do
               raise Realm::DependencyMissing, name unless context.key?(name)
 
-              if block
-                instance_variable_get("@#{name}") || instance_variable_set("@#{name}", block.(context[name]))
-              else
-                context[name]
-              end
+              return context[name] unless block
+
+              var = "@#{name}"
+              return instance_variable_get(var) if instance_variable_defined?(var)
+
+              instance_variable_set(var, block.(context[name]))
             end
           end
         end
