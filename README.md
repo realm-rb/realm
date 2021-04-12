@@ -1,4 +1,8 @@
-# Single service structure
+# Realm
+
+Domain layer framework following Domain-driven/CQRS design principles.
+
+[![Build status](https://badge.buildkite.com/346cce75f6c31e0a41bb98b198e85eb6b722243624459fad9c.svg)](https://buildkite.com/reevoo/realm)
 
 ## Service layers
 
