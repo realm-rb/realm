@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash'
 require 'realm/errors'
@@ -18,7 +19,7 @@ module Realm
     end
 
     def register(handler_class)
-      gateway_for(handler_class.send(:event_namespace) { nil }).register(handler_class)
+      gateway_for(handler_class.try(:event_namespace)).register(handler_class)
     end
 
     def add_listener(event_type, listener, namespace: nil)
