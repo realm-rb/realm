@@ -2,10 +2,6 @@ version: '3.4'
 services:
   localstack:
     image: localstack/localstack
-    ports:
-      - "4566:4566"
-      - "4571:4571"
-      - "8080:8080"
     environment:
       HOSTNAME: localstack
       HOSTNAME_EXTERNAL: localstack
@@ -20,3 +16,11 @@ services:
       - localstack
     command: ["cat"]
     tty: true
+    volumes:
+      - .:/app
+    environment:
+      LOG_LEVEL: warn
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: eu-west-1
+      AWS_ACCESS_KEY_ID: fake-access-key-id
+      AWS_SECRET_ACCESS_KEY: fake-secret-access-key
