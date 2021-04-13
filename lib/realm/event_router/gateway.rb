@@ -3,6 +3,18 @@
 module Realm
   class EventRouter
     class Gateway
+      # hotfix
+      class RuntimeBoundedEventHandler
+        def initialize(runtime, handler_class)
+          @runtime = runtime
+          @handler_class = handler_class
+        end
+
+        def call(event)
+          @handler_class.(event, runtime: @runtime)
+        end
+      end
+
       def self.auto_register_on_init
         false
       end
@@ -15,7 +27,7 @@ module Realm
 
       def register(handler_class)
         handler_class.event_types.each do |event_type|
-          add_listener(event_type, ->(event) { handler_class.(event, runtime: @runtime) })
+          add_listener(event_type, RuntimeBoundedEventHandler.new(@runtime, handler_class))
         end
       end
 

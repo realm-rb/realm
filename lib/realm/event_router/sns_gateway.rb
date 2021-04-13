@@ -59,7 +59,7 @@ module Realm
       end
 
       def queue_suffix(listener)
-        return SecureRandom.alphanumeric(16) unless listener.is_a?(EventHandler)
+        return SecureRandom.alphanumeric(16) unless listener.is_a?(Gateway::RuntimeBoundedEventHandler)
 
         listener.class.name.underscore.gsub(%r{/(domain|event_handlers?)}, '').gsub('/', '_')
       end
