@@ -136,7 +136,7 @@ RSpec.describe Realm::EventHandler do
       expected_head = { origin: 'SubsequentTriggerEventHandler#handle' }
       expect(runtime).to receive(:trigger).with(:bar, cause: foo, head: expected_head, attr1: 'value1')
 
-      SubsequentTriggerEventHandler.(foo, runtime: runtime)
+      SubsequentTriggerEventHandler.bind_runtime(runtime).(foo)
     end
   end
 end
