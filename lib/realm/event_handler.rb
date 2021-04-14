@@ -14,11 +14,32 @@ module Realm
     include Mixins::Reactive
     include Mixins::RepositoryHelper
 
+    class RuntimeBound
+      delegate :identifier, :event_types, to: :@handler_class
+
+      def initialize(handler_class, runtime)
+        @handler_class = handler_class
+        @runtime = runtime
+      end
+
+      def call(event)
+        @handler_class.(event, runtime: @runtime.session(cause: event))
+      end
+    end
+
     class << self
       attr_reader :trigger_mapping, :event_namespace
 
+      def bind_runtime(runtime)
+        RuntimeBound.new(self, runtime)
+      end
+
       def call(event, runtime:)
-        new(runtime: runtime.session(cause: event)).(event)
+        new(runtime: runtime).(event)
+      end
+
+      def identifier
+        name.underscore.gsub(/(domain|event_handlers?)/, '').gsub(%r{/+}, '-')
       end
 
       def event_types

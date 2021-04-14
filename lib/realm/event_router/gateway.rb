@@ -15,7 +15,7 @@ module Realm
 
       def register(handler_class)
         handler_class.event_types.each do |event_type|
-          add_listener(event_type, ->(event) { handler_class.(event, runtime: @runtime) })
+          add_listener(event_type, handler_class.bind_runtime(@runtime))
         end
       end
 
