@@ -13,6 +13,10 @@ module Realm
         def call(event)
           @handler_class.(event, runtime: @runtime)
         end
+
+        def queue_suffix
+          @handler_class.name.underscore.gsub(%r{/(domain|event_handlers?)}, '').gsub('/', '_')
+        end
       end
 
       def self.auto_register_on_init
