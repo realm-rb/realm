@@ -53,7 +53,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
   let(:topic_arn) { Aws::SNS::Client.new.create_topic(name: 'sample-topic').topic_arn }
   let(:event_log) { [] }
   let(:sqs) { Aws::SQS::Resource.new }
-  let(:queue_names) { sqs.queues.map {|q| q.url.sub(/^.*\//, '') } }
+  let(:queue_names) { sqs.queues.map { |q| q.url.sub(%r{^.*/}, '') } }
 
   subject do
     described_class.new(
