@@ -59,7 +59,7 @@ module Realm
       end
 
       def queue_suffix(listener)
-        listener.try(:queue_suffix) || SecureRandom.alphanumeric(16)
+        listener.try(:identifier) || SecureRandom.alphanumeric(16)
       end
     end
   end

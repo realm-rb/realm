@@ -52,6 +52,8 @@ RSpec.describe Realm::EventRouter::SNSGateway do
 
   let(:topic_arn) { Aws::SNS::Client.new.create_topic(name: 'sample-topic').topic_arn }
   let(:event_log) { [] }
+  let(:sqs) { Aws::SQS::Resource.new }
+  let(:queue_names) { sqs.queues.map {|q| q.url.sub(/^.*\//, '') } }
 
   subject do
     described_class.new(
@@ -84,6 +86,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     it 'handles events' do
       subject.register(SNSGatewaySpec::SampleHandler)
       test_event_flow
+      expect(queue_names).to include('something_happened-sns_gateway_spec-sample_handler')
     end
   end
 
@@ -91,6 +94,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     it 'handles events' do
       subject.register(SNSGatewaySpec::SampleAnyHandler)
       test_event_flow
+      expect(queue_names).to include('any-sns_gateway_spec-sample_any_handler')
     end
   end
 end
