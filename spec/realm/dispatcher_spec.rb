@@ -4,7 +4,7 @@ require 'realm/dispatcher'
 require 'realm/domain_resolver'
 require 'realm/query_handler'
 require 'realm/command_handler'
-require 'realm/errors'
+require 'realm/error'
 require_relative 'support/runtime_mock'
 
 RSpec.describe Realm::Dispatcher do

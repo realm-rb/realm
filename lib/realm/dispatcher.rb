@@ -3,7 +3,7 @@
 require 'active_support/core_ext/string'
 require 'realm/query_handler'
 require 'realm/command_handler'
-require 'realm/errors'
+require 'realm/error'
 require 'realm/persistence/repository_query_handler_adapter'
 
 module Realm
