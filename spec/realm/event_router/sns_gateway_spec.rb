@@ -38,6 +38,21 @@ module SNSGatewaySpec
       event_log << event
     end
   end
+
+  class VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler < Realm::EventHandler
+    on :something_happened do |event|
+      # nothing
+    end
+  end
+
+  class CustomIdentifierHandler < Realm::EventHandler
+    inject :event_log
+    identifier :short_and_sweet
+
+    on :something_happened do |event|
+      event_log << event
+    end
+  end
 end
 
 RSpec.describe Realm::EventRouter::SNSGateway do
@@ -95,6 +110,22 @@ RSpec.describe Realm::EventRouter::SNSGateway do
       subject.register(SNSGatewaySpec::SampleAnyHandler)
       test_event_flow
       expect(queue_names).to include('any-sns_gateway_spec-sample_any_handler')
+    end
+  end
+
+  context 'with long name event handler class' do
+    it 'raises error' do
+      expect {
+        subject.register(SNSGatewaySpec::VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler)
+      }.to raise_error(Realm::EventRouter::SNSGateway::QueueNameTooLong)
+    end
+  end
+
+  context 'with custom identifier event handler class' do
+    it 'handles events' do
+      subject.register(SNSGatewaySpec::CustomIdentifierHandler)
+      test_event_flow
+      expect(queue_names).to include('something_happened-short_and_sweet')
     end
   end
 end
