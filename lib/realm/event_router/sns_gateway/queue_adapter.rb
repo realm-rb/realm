@@ -35,7 +35,7 @@ module Realm
             'ApproximateNumberOfMessages',
             'ApproximateNumberOfMessagesDelayed',
             'ApproximateNumberOfMessagesNotVisible',
-          ).all? { |_, val| val.to_i == 0 }
+          ).all? { |_, val| val.to_i.zero? }
         end
 
         private
