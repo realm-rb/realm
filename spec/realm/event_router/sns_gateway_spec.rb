@@ -80,7 +80,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
   end
 
   after do
-    subject.purge!
+    sqs.queues.each(&:delete)
   end
 
   context 'with specific event listener' do
@@ -117,7 +117,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     it 'raises error' do
       expect {
         subject.register(SNSGatewaySpec::VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler)
-      }.to raise_error(Realm::EventRouter::SNSGateway::QueueNameTooLong)
+      }.to raise_error(Realm::EventRouter::SNSGateway::QueueManager::QueueNameTooLong)
     end
   end
 

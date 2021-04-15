@@ -4,7 +4,6 @@ require 'securerandom'
 require 'active_support/core_ext/string'
 
 require 'realm/event_handler'
-require 'realm/error'
 require_relative './gateway'
 require_relative './sns_gateway/queue_manager'
 require_relative './sns_gateway/topic_adapter'
@@ -13,10 +12,6 @@ require_relative './sns_gateway/worker'
 module Realm
   class EventRouter
     class SNSGateway < Gateway
-      class QueueNameTooLong < Realm::Error[
-        "Queue name can be 80 characters long max, please provide custom EventHandler identifier if it's auto generated"
-      ]; end
-
       def initialize(topic_arn:, queue_prefix: nil, event_processing_attempts: 3, **)
         super
         @topic = TopicAdapter.new(topic_arn)
@@ -44,25 +39,22 @@ module Realm
         )
       end
 
-      # Purge all dynamically created AWS resources
-      def purge!
-        @queue_map.each_key(&:delete)
-        @queue_map.clear
+      # Cleans up empty abandoned queues and subscriptions (for cases when event handler was removed or renamed)
+      def cleanup
+        queue_manager.cleanup(except: @queue_map.values)
       end
 
       private
 
       def provide_queue(event_type, listener)
-        queue_name = [@queue_prefix, event_type, queue_suffix(listener)].compact.join('-')
-        raise QueueNameTooLong if queue_name.size > 80
-
+        queue_name = [event_type, queue_suffix(listener)].join('-')
         queue = queue_manager.provide(queue_name)
         @topic.subscribe(event_type, queue)
         queue
       end
 
       def queue_manager
-        @queue_manager ||= QueueManager.new
+        @queue_manager ||= QueueManager.new(prefix: @queue_prefix)
       end
 
       def queue_suffix(listener)
