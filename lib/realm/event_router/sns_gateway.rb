@@ -4,6 +4,7 @@ require 'securerandom'
 require 'active_support/core_ext/string'
 
 require 'realm/event_handler'
+require 'realm/error'
 require_relative './gateway'
 require_relative './sns_gateway/queue_manager'
 require_relative './sns_gateway/topic_adapter'
@@ -12,6 +13,10 @@ require_relative './sns_gateway/worker'
 module Realm
   class EventRouter
     class SNSGateway < Gateway
+      class QueueNameTooLong < Realm::Error[
+        "Queue name can be 80 characters long max, please provide custom EventHandler identifier if it's auto generated"
+      ]; end
+
       def initialize(topic_arn:, queue_prefix: nil, event_processing_attempts: 3, **)
         super
         @topic = TopicAdapter.new(topic_arn)
@@ -49,6 +54,8 @@ module Realm
 
       def provide_queue(event_type, listener)
         queue_name = [@queue_prefix, event_type, queue_suffix(listener)].compact.join('-')
+        raise QueueNameTooLong if queue_name.size > 80
+
         queue = queue_manager.provide(queue_name)
         @topic.subscribe(event_type, queue)
         queue

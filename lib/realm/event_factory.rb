@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'realm/errors'
+require 'realm/error'
 require 'realm/event'
 
 module Realm

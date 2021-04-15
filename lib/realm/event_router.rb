@@ -3,7 +3,7 @@
 require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash'
-require 'realm/errors'
+require 'realm/error'
 require 'realm/event_handler'
 require 'realm/event_factory'
 
