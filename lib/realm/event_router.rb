@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash'
 require 'realm/error'
@@ -36,6 +35,10 @@ module Realm
       @gateways.filter_map do |(namespace, gateway)|
         gateway.worker(**options) if namespaces.empty? || namespaces.include?(namespace)
       end
+    end
+
+    def cleanup
+      @gateways.each { |(_, gateway)| gateway.cleanup }
     end
 
     private
@@ -74,7 +77,7 @@ module Realm
     end
 
     def gateway_for(namespace)
-      @gateways.fetch(namespace || default_namespace) do
+      @gateways.fetch(namespace.try(:to_sym) || default_namespace) do
         raise "No event gateway for #{namespace || 'default'} namespace" # TODO: extract error class
       end
     end

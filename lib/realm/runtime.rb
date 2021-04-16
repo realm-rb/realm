@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/object/try'
 require 'realm/dispatcher'
 require 'realm/event_router'
 require 'realm/multi_worker'
@@ -36,6 +37,10 @@ module Realm
         map[name] = component.health if component.respond_to?(:health)
       end
       HealthStatus.combine(component_statuses)
+    end
+
+    def cleanup
+      @event_router.try(:cleanup)
     end
 
     private

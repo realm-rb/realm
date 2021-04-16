@@ -80,7 +80,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
   end
 
   after do
-    subject.purge!
+    sqs.queues.each(&:delete)
   end
 
   context 'with specific event listener' do
@@ -117,7 +117,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     it 'raises error' do
       expect {
         subject.register(SNSGatewaySpec::VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler)
-      }.to raise_error(Realm::EventRouter::SNSGateway::QueueNameTooLong)
+      }.to raise_error(Realm::EventRouter::SNSGateway::QueueManager::QueueNameTooLong)
     end
   end
 
@@ -126,6 +126,16 @@ RSpec.describe Realm::EventRouter::SNSGateway do
       subject.register(SNSGatewaySpec::CustomIdentifierHandler)
       test_event_flow
       expect(queue_names).to include('something_happened-short_and_sweet')
+    end
+  end
+
+  describe '#cleanup' do
+    it 'calls cleanup on queue manager passing the current queues to skip' do
+      expect_any_instance_of(Realm::EventRouter::SNSGateway::QueueManager).to receive(:cleanup).with(
+        except: [kind_of(Realm::EventRouter::SNSGateway::QueueAdapter)],
+      )
+      subject.register(SNSGatewaySpec::SampleHandler)
+      subject.cleanup
     end
   end
 end

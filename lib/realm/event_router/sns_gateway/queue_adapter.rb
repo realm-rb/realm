@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+require 'realm/event_router/gateway'
+require 'realm/mixins/decorator'
+
 module Realm
   class EventRouter
     class SNSGateway < Gateway
+      # Provides cleaner SDK over Aws::SQS::Queue
       class QueueAdapter
-        # Provides cleaner SDK over Aws::SQS::Queue
-        def initialize(queue)
-          @queue = queue
-        end
+        include Mixins::Decorator[:@queue]
 
         def arn
           @queue.attributes['QueueArn']
@@ -29,12 +30,12 @@ module Realm
           )
         end
 
-        def method_missing(name, *args)
-          @queue.send(name, *args)
-        end
-
-        def respond_to_missing?(name)
-          @queue.respond_to?(name)
+        def empty?
+          attributes.slice(
+            'ApproximateNumberOfMessages',
+            'ApproximateNumberOfMessagesDelayed',
+            'ApproximateNumberOfMessagesNotVisible',
+          ).all? { |_, val| val.to_i.zero? }
         end
 
         private

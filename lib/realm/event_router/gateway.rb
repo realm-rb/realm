@@ -27,8 +27,12 @@ module Realm
         raise NotImplementedError
       end
 
-      def worker
+      def worker(*)
         nil
+      end
+
+      def cleanup
+        # do nothing
       end
 
       protected

@@ -49,6 +49,22 @@ RSpec.describe Realm::Runtime do
     end
   end
 
+  describe '#cleanup' do
+    let(:event_gateways_config) { { default: { type: :internal_loop, events_module: Module.new } } }
+    subject do
+      described_class.new(
+        event_gateways_config: event_gateways_config,
+        domain_resolver: domain_resolver,
+        context: context,
+      )
+    end
+
+    it 'calls cleanup on event router' do
+      expect_any_instance_of(Realm::EventRouter).to receive(:cleanup)
+      subject.cleanup
+    end
+  end
+
   %i[query run run_as_job].each do |method|
     describe "##{method}" do
       it 'passes the call down to dispatcher' do
