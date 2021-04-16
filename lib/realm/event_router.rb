@@ -38,6 +38,10 @@ module Realm
       end
     end
 
+    def cleanup
+      @gateways.each { |gateway| gateway.try(:cleanup) }
+    end
+
     private
 
     def init_gateways(gateways_spec)

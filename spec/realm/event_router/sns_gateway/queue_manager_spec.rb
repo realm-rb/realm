@@ -68,7 +68,7 @@ RSpec.describe Realm::EventRouter::SNSGateway::QueueManager do
       end
     end
 
-    it 'deletes empty abandoned queues' do
+    it 'deletes empty queues which are not skipped' do
       expect { subject.cleanup(except: used_queue) }.to change { sqs.queues.to_a.size }.from(3).to(2)
       expect(queue_names).to include('test_prefix-used_queue', 'test_prefix-abandoned_queue')
     end

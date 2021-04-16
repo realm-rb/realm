@@ -41,7 +41,7 @@ module Realm
 
       # Cleans up empty abandoned queues and subscriptions (for cases when event handler was removed or renamed)
       def cleanup
-        queue_manager.cleanup(except: @queue_map.values)
+        queue_manager.cleanup(except: @queue_map.keys)
       end
 
       private
