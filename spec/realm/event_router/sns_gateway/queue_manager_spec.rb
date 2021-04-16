@@ -75,7 +75,8 @@ RSpec.describe Realm::EventRouter::SNSGateway::QueueManager do
 
     it 'refuses to cleanup without prefix' do
       expect { described_class.new.cleanup(except: used_queue) }.to raise_error(
-        Realm::EventRouter::SNSGateway::QueueManager::CleanupWithoutPrefix)
+        Realm::EventRouter::SNSGateway::QueueManager::CleanupWithoutPrefix,
+      )
     end
   end
 end
