@@ -39,7 +39,7 @@ module Realm
     end
 
     def cleanup
-      @gateways.each { |gateway| gateway.try(:cleanup) }
+      @gateways.each { |(_, gateway)| gateway.cleanup }
     end
 
     private
@@ -78,7 +78,7 @@ module Realm
     end
 
     def gateway_for(namespace)
-      @gateways.fetch(namespace || default_namespace) do
+      @gateways.fetch(namespace.try(:to_sym) || default_namespace) do
         raise "No event gateway for #{namespace || 'default'} namespace" # TODO: extract error class
       end
     end
