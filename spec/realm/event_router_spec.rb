@@ -15,7 +15,6 @@ module EventRouterSpec
   end
 end
 
-
 RSpec.describe Realm::EventRouter do
   let(:stack) { [] }
   let(:runtime) { RuntimeMock.new(context: { stack: stack }) }
