@@ -129,13 +129,13 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     end
   end
 
-  describe '#cleanup' do
-    it 'calls cleanup on queue manager passing the current queues to skip' do
-      expect_any_instance_of(Realm::EventRouter::SNSGateway::QueueManager).to receive(:cleanup).with(
-        except: [kind_of(Realm::EventRouter::SNSGateway::QueueAdapter)],
-      )
+  describe '#queues' do
+    it 'returns all active queues' do
       subject.register(SNSGatewaySpec::SampleHandler)
-      subject.cleanup
+      subject.register(SNSGatewaySpec::SampleAnyHandler)
+      expect(subject.queues.size).to eq 2
+      expect(subject.queues[0]).to be_a Realm::EventRouter::SNSGateway::QueueAdapter
+      expect(subject.queues[1]).to be_a Realm::EventRouter::SNSGateway::QueueAdapter
     end
   end
 end

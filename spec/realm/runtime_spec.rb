@@ -49,7 +49,7 @@ RSpec.describe Realm::Runtime do
     end
   end
 
-  describe '#cleanup' do
+  describe '#active_queues' do
     let(:event_gateways_config) { { default: { type: :internal_loop, events_module: Module.new } } }
     subject do
       described_class.new(
@@ -59,9 +59,9 @@ RSpec.describe Realm::Runtime do
       )
     end
 
-    it 'calls cleanup on event router' do
-      expect_any_instance_of(Realm::EventRouter).to receive(:cleanup)
-      subject.cleanup
+    it 'calls active_queues on event router' do
+      expect_any_instance_of(Realm::EventRouter).to receive(:active_queues)
+      subject.active_queues
     end
   end
 

@@ -90,11 +90,11 @@ RSpec.describe Realm::EventRouter do
     end
   end
 
-  describe '#cleanup' do
-    it 'calls cleanup method on all gateways' do
-      expect(gateway1).to receive(:cleanup)
-      expect(gateway2).to receive(:cleanup)
-      subject.cleanup
+  describe '#active_queues' do
+    it 'collects queues from all gateways' do
+      expect(gateway1).to receive(:queues).and_return([:queue1])
+      expect(gateway2).to receive(:queues).and_return([:queue2])
+      expect(subject.active_queues).to eq([:queue1, :queue2])
     end
   end
 end

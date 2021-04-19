@@ -35,6 +35,10 @@ module Realm
         # do nothing
       end
 
+      def queues
+        []
+      end
+
       protected
 
       def create_event(event_type, attributes = {})
