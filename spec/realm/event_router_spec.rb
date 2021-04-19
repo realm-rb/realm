@@ -94,7 +94,7 @@ RSpec.describe Realm::EventRouter do
     it 'collects queues from all gateways' do
       expect(gateway1).to receive(:queues).and_return([:queue1])
       expect(gateway2).to receive(:queues).and_return([:queue2])
-      expect(subject.active_queues).to eq([:queue1, :queue2])
+      expect(subject.active_queues).to eq(%i[queue1 queue2])
     end
   end
 end
