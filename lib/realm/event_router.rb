@@ -37,8 +37,10 @@ module Realm
       end
     end
 
-    def cleanup
-      @gateways.each { |(_, gateway)| gateway.cleanup }
+    def active_queues
+      @gateways.values.reduce([]) do |queues, gateway|
+        queues + gateway.queues
+      end
     end
 
     private

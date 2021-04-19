@@ -39,8 +39,12 @@ module Realm
       HealthStatus.combine(component_statuses)
     end
 
-    def cleanup
-      @event_router.try(:cleanup)
+    # Get all active messaging queues. For maintenance purpose only.
+    # TODO: Introduce component container and allow to call those method directly on components instead of
+    # polluting runtime
+    # Example: engine.realm.components.find(type: Realm::EventRouter::SNSGateway).try(:active_queues)
+    def active_queues
+      @event_router.active_queues
     end
 
     private
