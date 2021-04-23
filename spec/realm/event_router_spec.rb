@@ -101,8 +101,10 @@ RSpec.describe Realm::EventRouter do
     end
 
     context 'with domain resolver' do
-      let(:domain_resolver) { double(:domain_resolver, all_event_handlers: [:handler1] ) }
-      subject { described_class.new(gateways_spec, runtime: runtime, prefix: 'test-prefix', domain_resolver: domain_resolver) }
+      let(:domain_resolver) { double(:domain_resolver, all_event_handlers: [:handler1]) }
+      subject do
+        described_class.new(gateways_spec, runtime: runtime, prefix: 'test-prefix', domain_resolver: domain_resolver)
+      end
 
       it 'triggers auto registration of event handlers' do
         expect(gateway2).to receive(:register).with(:handler1)
