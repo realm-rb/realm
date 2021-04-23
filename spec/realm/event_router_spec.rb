@@ -91,10 +91,23 @@ RSpec.describe Realm::EventRouter do
   end
 
   describe '#active_queues' do
-    it 'collects queues from all gateways' do
+    before do
       expect(gateway1).to receive(:queues).and_return([:queue1])
       expect(gateway2).to receive(:queues).and_return([:queue2])
+    end
+
+    it 'collects queues from all gateways' do
       expect(subject.active_queues).to eq(%i[queue1 queue2])
+    end
+
+    context 'with domain resolver' do
+      let(:domain_resolver) { double(:domain_resolver, all_event_handlers: [:handler1] ) }
+      subject { described_class.new(gateways_spec, runtime: runtime, prefix: 'test-prefix', domain_resolver: domain_resolver) }
+
+      it 'triggers auto registration of event handlers' do
+        expect(gateway2).to receive(:register).with(:handler1)
+        subject.active_queues
+      end
     end
   end
 end
