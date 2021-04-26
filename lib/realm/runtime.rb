@@ -44,7 +44,7 @@ module Realm
     # polluting runtime
     # Example: engine.realm.components.find(type: Realm::EventRouter::SNSGateway).try(:active_queues)
     def active_queues
-      @event_router.active_queues
+      @event_router.try(:active_queues) || []
     end
 
     private

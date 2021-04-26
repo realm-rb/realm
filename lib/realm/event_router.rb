@@ -38,6 +38,7 @@ module Realm
     end
 
     def active_queues
+      auto_register_handlers
       @gateways.values.reduce([]) do |queues, gateway|
         queues + gateway.queues
       end
