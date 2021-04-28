@@ -52,6 +52,7 @@ module Realm
         def delete_by(params)
           client.delete_by_query(
             index: index_name,
+            refresh: refresh?,
             body: { query: {
               bool: {
                 must: match_params(params),
