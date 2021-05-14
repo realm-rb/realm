@@ -40,11 +40,12 @@ module Realm
     end
 
     def setup
+      logger.info("Setting up #{@root_module} realm")
       @container = Container.new
       @context = nil
       @runtime = nil
       config_persistence
-      @container.register_all(logger: @logger, **@dependencies)
+      @container.register_all(logger: logger, **@dependencies)
       create_runtime
       self
     end
