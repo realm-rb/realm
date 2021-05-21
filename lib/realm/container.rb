@@ -15,11 +15,11 @@ module Realm
       register_all(hash)
     end
 
-    def register(thing, *args, memoize: true, **kwargs)
+    def register(thing, *args, call: true, memoize: true, **kwargs)
       return super(thing, args[0]) unless thing.respond_to?(:new)
 
       container = self
-      super(thing, memoize: memoize) do
+      super(thing, call: call, memoize: memoize) do
         (thing.try(:dependencies) || {}).each_pair do |key, dependency|
           kwargs[key] = container.resolve(dependency)
         end
