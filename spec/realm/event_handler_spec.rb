@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'realm/runtime'
+require 'realm/container'
 require 'realm/event'
 require 'realm/event_handler'
-require_relative 'support/runtime_mock'
+require 'realm/domain_resolver'
 
 module FooEvents
   class Foo < Realm::Event; end
@@ -92,7 +94,12 @@ end
 
 RSpec.describe Realm::EventHandler do
   let(:stack) { [] }
-  let(:runtime) { RuntimeMock.new(context: { stack: stack }) }
+  let(:container) { Realm::Container[stack: stack] }
+  let(:runtime) { Realm::Runtime.new(container) }
+
+  before do
+    container.register(Realm::DomainResolver)
+  end
 
   describe '.call' do
     it 'calls correct event handler methods' do

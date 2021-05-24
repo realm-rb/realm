@@ -10,10 +10,10 @@ module Realm
   class DomainResolver
     DOMAIN_CLASS_TYPES = [CommandHandler, QueryHandler, EventHandler].freeze
 
-    def initialize(domain_module)
+    def initialize(domain_module = nil) # nil domain resolver is useful in tests
       @domain_module = domain_module
       @index = DOMAIN_CLASS_TYPES.map { |t| [t, {}] }.to_h
-      scan(domain_module)
+      scan(domain_module) if domain_module
     end
 
     def get_handler_with_action(type, identifier)

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'realm/container'
 require 'realm/dispatcher'
 require 'realm/domain_resolver'
 require 'realm/query_handler'
@@ -11,7 +12,7 @@ RSpec.describe Realm::Dispatcher do
   let(:domain_resolver) { instance_double(Realm::DomainResolver) }
   let(:handler) { ->(**args) { args } }
   let(:runtime) { nil }
-  subject { described_class.new(domain_resolver: domain_resolver, runtime: runtime) }
+  subject { described_class.new(runtime, domain_resolver: domain_resolver) }
 
   describe '#query' do
     it 'dispatches query if handler exist' do
@@ -23,8 +24,8 @@ RSpec.describe Realm::Dispatcher do
 
     context 'with missing handler but matching repository name' do
       let(:user_repo) { double(:user_repo, find: nil) }
-      let(:context) { { user_repo: user_repo }.with_indifferent_access }
-      let(:runtime) { RuntimeMock.new(domain_resolver: domain_resolver, context: context) }
+      let(:container) { Realm::Container[user_repo: user_repo] }
+      let(:runtime) { Realm::Runtime.new(container) }
 
       it 'passes query down to repo query handler adapter' do
         expect(domain_resolver).to receive(:get_handler_with_action)

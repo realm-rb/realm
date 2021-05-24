@@ -20,7 +20,6 @@ module Realm
           config = ::ROM::Configuration.new(:sql, @url, **config_options)
           config.auto_registration(@class_path, namespace: @root_module.to_s)
           @client = ::ROM.container(config)
-          # Spring.after_fork { rom.disconnect } if defined?(Spring)
         end
 
         def health

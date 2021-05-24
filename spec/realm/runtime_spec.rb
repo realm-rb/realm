@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'realm/runtime'
-require 'realm/runtime/session'
-require 'realm/domain_resolver'
-require 'realm/dispatcher'
-require 'realm/event_router'
-require 'realm/multi_worker'
-require 'realm/health_status'
+require 'realm'
 
 RSpec.describe Realm::Runtime do
-  let(:context) { { foo: 1 } }
+  let(:container) { Realm::Container[foo: 1] }
   let(:domain_resolver) { instance_double(Realm::DomainResolver, all_event_handlers: []) }
-  subject { described_class.new(domain_resolver: domain_resolver, context: context) }
+
+  before do
+    container.register(Realm::DomainResolver, domain_resolver, instantiate: false)
+  end
+
+  subject { described_class.new(container) }
 
   describe '#[]' do
-    it 'passes the call down to context' do
+    it 'passes the call down to container' do
       expect(subject[:foo]).to eq(1)
     end
   end
@@ -26,22 +25,21 @@ RSpec.describe Realm::Runtime do
     end
 
     it 'returns instance of Session if passed context is not empty' do
-      expect(Realm::Runtime::Session).to receive(:new).with(
-        subject, kind_of(Realm::Dispatcher), { bar: 2 }
-      ).and_call_original
+      expect(Realm::Runtime::Session).to receive(:new).with(subject, { bar: 2 }).and_call_original
       session = subject.session(bar: 2)
       expect(session).to be_a(Realm::Runtime::Session)
-      expect(session.context).to eq(foo: 1, bar: 2)
+      expect(session.context[:foo]).to eq(1)
+      expect(session.context[:bar]).to eq(2)
     end
   end
 
   describe '#health' do
-    let(:context) do
-      {
+    let(:container) do
+      Realm::Container[
         foo: double(:component1),
         bar: double(:component2, health: Realm::HealthStatus[:green]),
         zoo: double(:component3, health: Realm::HealthStatus[:yellow]),
-      }
+      ]
     end
 
     it 'returns combined health status for all components responding to health method' do
@@ -50,17 +48,13 @@ RSpec.describe Realm::Runtime do
   end
 
   describe '#active_queues' do
-    let(:event_gateways_config) { { default: { type: :internal_loop, events_module: Module.new } } }
-    subject do
-      described_class.new(
-        event_gateways_config: event_gateways_config,
-        domain_resolver: domain_resolver,
-        context: context,
-      )
+    let(:event_router) { instance_double(Realm::EventRouter) }
+    before do
+      container.register(Realm::EventRouter, event_router, instantiate: false)
     end
 
     it 'calls active_queues on event router' do
-      expect_any_instance_of(Realm::EventRouter).to receive(:active_queues)
+      expect(event_router).to receive(:active_queues)
       subject.active_queues
     end
   end
@@ -82,25 +76,21 @@ RSpec.describe Realm::Runtime do
   end
 
   context 'with event gateway configured' do
-    let(:event_gateways_config) { { default: { type: :internal_loop, events_module: Module.new } } }
-    subject do
-      described_class.new(
-        domain_resolver: domain_resolver,
-        context: context,
-        event_gateways_config: event_gateways_config,
-      )
+    let(:event_router) { instance_double(Realm::EventRouter) }
+    before do
+      container.register(Realm::EventRouter, event_router, instantiate: false)
     end
 
     describe '#trigger' do
       it 'passes the call down to event router' do
-        expect_any_instance_of(Realm::EventRouter).to receive(:trigger).with(:sample_name, foo: 123).and_return(:result)
+        expect(event_router).to receive(:trigger).with(:sample_name, foo: 123).and_return(:result)
         expect(subject.trigger(:sample_name, foo: 123)).to eq(:result)
       end
     end
 
     describe '#add_listener' do
       it 'passes the call down to event router' do
-        expect_any_instance_of(Realm::EventRouter).to receive(:add_listener).with(
+        expect(event_router).to receive(:add_listener).with(
           :name1, :listener1, namespace: :namespace1
         ).and_return(:result)
         expect(subject.add_listener(:name1, :listener1, namespace: :namespace1)).to eq(:result)
@@ -109,7 +99,7 @@ RSpec.describe Realm::Runtime do
 
     describe '#worker' do
       it 'calls EventRouter#workers and wrap it into MultiWorker' do
-        expect_any_instance_of(Realm::EventRouter).to receive(:workers).with(:foo, :bar).and_return([:worker1])
+        expect(event_router).to receive(:workers).with(:foo, :bar).and_return([:worker1])
         worker = subject.worker(:foo, :bar)
         expect(worker).to be_a(Realm::MultiWorker)
       end

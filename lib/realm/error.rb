@@ -30,7 +30,7 @@ module Realm
   end
 
   class DependencyMissing < Error
-    def initialize(dependency_name, msg: "There is no '#{dependency_name}' in context object")
+    def initialize(dependency_name, msg: "Dependency '#{dependency_name}' missing in container")
       super(msg)
     end
   end

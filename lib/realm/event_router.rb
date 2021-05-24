@@ -3,15 +3,19 @@
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash'
 require 'realm/error'
+require 'realm/domain_resolver'
 require 'realm/event_handler'
 require 'realm/event_factory'
+require 'realm/mixins/dependency_injection'
 
 module Realm
   class EventRouter
-    def initialize(gateways_spec, prefix: nil, domain_resolver: nil, runtime: nil)
+    include Mixins::DependencyInjection
+    inject DomainResolver
+    inject 'Realm::Runtime', lazy: true
+
+    def initialize(gateways_spec, prefix: nil)
       @prefix = prefix
-      @domain_resolver = domain_resolver
-      @runtime = runtime
       @auto_registered = false
       @default_namespace = nil
       init_gateways(gateways_spec)
@@ -67,16 +71,16 @@ module Realm
         namespace: namespace,
         queue_prefix: @prefix,
         event_factory: EventFactory.new(config.fetch(:events_module)),
-        runtime: @runtime,
+        runtime: runtime,
         **config.except(:type, :default, :events_module),
       )
     end
 
     def auto_register_handlers
-      return if @auto_registered || !@domain_resolver
+      return if @auto_registered || !domain_resolver
 
       @auto_registered = true
-      @domain_resolver.all_event_handlers.each { |klass| register(klass) }
+      domain_resolver.all_event_handlers.each { |klass| register(klass) }
     end
 
     def gateway_for(namespace)
