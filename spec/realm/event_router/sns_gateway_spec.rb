@@ -5,7 +5,7 @@ require 'realm/event_router/sns_gateway'
 require 'realm/event_handler'
 require 'realm/event_factory'
 require 'realm/event'
-require_relative '../support/runtime_mock'
+require 'realm/runtime'
 
 require 'aws-sdk-core'
 require 'aws-sdk-sns'
@@ -74,7 +74,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     described_class.new(
       topic_arn: topic_arn,
       event_factory: Realm::EventFactory.new(SNSGatewaySpec),
-      runtime: RuntimeMock.new(context: { event_log: event_log }),
+      runtime: Realm::Runtime.new(event_log: event_log, logger: Logger.new('/dev/null')),
       event_processing_attempts: 1,
     )
   end

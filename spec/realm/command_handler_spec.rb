@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'realm/command_handler'
 require 'realm/runtime'
-require_relative 'support/runtime_mock'
 
 module CommandHandlerSpec
   class TestCommandHandler < Realm::CommandHandler
@@ -18,7 +17,7 @@ module CommandHandlerSpec
 end
 
 RSpec.describe Realm::CommandHandler do
-  let(:runtime) { RuntimeMock.new }
+  let(:runtime) { Realm::Runtime.new }
   subject { CommandHandlerSpec::TestCommandHandler.new(runtime: runtime) }
 
   it 'can run other commands' do

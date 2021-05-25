@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 require 'realm/event'
+require 'realm/runtime'
 require 'realm/event_router'
 require 'realm/event_router/internal_loop_gateway'
-require_relative 'support/runtime_mock'
 
 module EventRouterSpec
   class Ns1SampleHandler < Realm::EventHandler
@@ -17,7 +17,7 @@ end
 
 RSpec.describe Realm::EventRouter do
   let(:stack) { [] }
-  let(:runtime) { RuntimeMock.new(context: { stack: stack }) }
+  let(:runtime) { Realm::Runtime.new(stack: stack) }
   let(:gateways_spec) do
     {
       ns1: { type: :internal_loop, events_module: EventRouterSpec },

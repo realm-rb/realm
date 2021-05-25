@@ -4,32 +4,29 @@ require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/with_options'
 require 'dry-initializer'
 require 'realm/container'
-require 'realm/context'
 require 'realm/runtime'
 require 'realm/domain_resolver'
 require 'realm/persistence'
+require 'realm/dispatcher'
+require 'realm/event_router'
 
 module Realm
   class Builder
     extend Dry::Initializer
 
-    attr_reader :runtime
-
     with_options reader: false do
       param :root_module
-      option :database_url,         default: proc { nil }
-      option :prefix,               default: proc { nil }
+      option :database_url,         default: proc {}
+      option :prefix,               default: proc {}
       option :namespace,            default: proc { @root_module.to_s.underscore }
       option :domain_module,        default: proc { "#{@root_module}::Domain" }
       option :engine_class,         default: proc { "#{@root_module}::Engine" }
       option :engine_path,          default: proc { constantize(@engine_class)&.root }
-      option :domain_resolver,      default: proc { constantize(@domain_module)&.then { |m| DomainResolver.new(m) } }
-      option :logger,               default: proc { nil }
+      option :logger,               default: proc {}
       option :dependencies,         default: proc { {} }
       option :job_scheduler,        default: proc { {} }
       option :persistence_gateway,  default: proc { @database_url && { url: @database_url } }
-      # TODO: support multiple persistence gateways
-      option :event_gateway,        default: proc { nil }
+      option :event_gateway,        default: proc {}
       option :event_gateways,       default: proc {
         @event_gateway ? { default: { **@event_gateway, default: true } } : {}
       }
@@ -41,19 +38,23 @@ module Realm
 
     def setup
       logger.info("Setting up #{@root_module} realm")
-      @container = Container.new
-      @context = nil
-      @runtime = nil
+      setup_container
       config_persistence
-      @container.register_all(logger: logger, **@dependencies)
-      create_runtime
       self
+    end
+
+    def runtime
+      @container.resolve(Runtime)
     end
 
     private
 
-    def context
-      @context ||= Context.new(@container)
+    def setup_container
+      @container = Container.new
+      @container.register_factory(DomainResolver, constantize(@domain_module))
+      @container.register_factory(EventRouter, @event_gateways, prefix: @prefix) unless @event_gateways.empty?
+      @container.register_factory(Runtime, @container)
+      @container.register_all(logger: logger, **@dependencies)
     end
 
     def config_persistence
@@ -61,15 +62,6 @@ module Realm
 
       options = persistence_defaults.merge(@persistence_gateway)
       Persistence.setup(@root_module, options)
-    end
-
-    def create_runtime
-      @runtime = Runtime.new(
-        context: context,
-        domain_resolver: @domain_resolver,
-        event_gateways_config: @event_gateways,
-        prefix: @prefix,
-      )
     end
 
     def constantize(*parts)
