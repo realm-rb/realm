@@ -19,7 +19,7 @@ module Realm
           instance
         end
 
-        def inject(*things, as: nil, optional: false, lazy: false)
+        def inject(*things, as: nil, optional: false, lazy: false) # rubocop:disable Naming/MethodParameterName
           @injecting ||= []
           things.each do |t|
             @injecting << {

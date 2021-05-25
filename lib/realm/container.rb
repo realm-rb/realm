@@ -18,7 +18,7 @@ module Realm
     end
 
     def [](key)
-       resolve(key) if key?(key)
+      resolve(key) if key?(key)
     end
 
     def register_factory(klass, *args, memoize: true, **kwargs)
