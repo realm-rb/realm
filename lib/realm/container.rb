@@ -8,6 +8,7 @@ require 'realm/error'
 module Realm
   class Container
     include Dry::Container::Mixin
+    include Enumerable
 
     def self.[](object)
       object.is_a?(Container) ? object : Container.new(object)
