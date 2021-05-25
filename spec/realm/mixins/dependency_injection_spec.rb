@@ -9,6 +9,10 @@ module DependencyInjectionSpec
     include Realm::Mixins::DependencyInjection
   end
 
+  class Simple < WithDI
+    inject :foo, 'bar'
+  end
+
   class Foo
     attr_reader :value
 
@@ -61,6 +65,16 @@ RSpec.describe Realm::Mixins::DependencyInjection do
   let(:container) { Realm::Container.new }
 
   describe '.inject' do
+    context 'with symbol or string' do
+      it 'injects dependency from container' do
+        container.register(:foo, 123)
+        container.register(:bar, 456)
+        simple = container.create(DependencyInjectionSpec::Simple)
+        expect(simple.send(:foo)).to eq 123
+        expect(simple.send(:bar)).to eq 456
+      end
+    end
+
     context 'with class constant' do
       it 'injects instance of given class from container' do
         container.register_factory(DependencyInjectionSpec::Foo, 123)
@@ -78,8 +92,8 @@ RSpec.describe Realm::Mixins::DependencyInjection do
       end
     end
 
-    context 'with class circular dependencies and lazy option' do
-      it 'injects instance of given class from container' do
+    context 'with class name in string and lazy option' do
+      it 'allows injecting circular dependencies' do
         container.register_factory(DependencyInjectionSpec::Circular1)
         container.register_factory(DependencyInjectionSpec::Circular2)
         circular2 = container.resolve(DependencyInjectionSpec::Circular2)
