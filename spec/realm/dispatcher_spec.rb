@@ -6,7 +6,6 @@ require 'realm/domain_resolver'
 require 'realm/query_handler'
 require 'realm/command_handler'
 require 'realm/error'
-require_relative 'support/runtime_mock'
 
 RSpec.describe Realm::Dispatcher do
   let(:domain_resolver) { instance_double(Realm::DomainResolver) }

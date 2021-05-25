@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../support/runtime_mock'
 
+require 'realm/runtime'
 require 'realm/persistence'
 require 'realm/persistence/rom/repository'
 require 'realm/query_handler'
@@ -51,7 +51,7 @@ module TestMixinsRepositoryHelper
         end
       end
       let(:thing_repo) { ThingRepo.new(rom).tap { |r| r.create(name: 'box') } }
-      let(:runtime) { RuntimeMock.new(context: { sample_repo: thing_repo }) }
+      let(:runtime) { Realm::Runtime.new(sample_repo: thing_repo) }
 
       it 'auto injects repo and allows read' do
         expect(Domain::Sample::QueryHandlers.(action: :read, runtime: runtime)).to eq([{ name: 'box' }])

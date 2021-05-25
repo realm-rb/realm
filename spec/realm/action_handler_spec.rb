@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'active_support/core_ext/module/delegation'
 require 'realm/action_handler'
-require_relative 'support/runtime_mock'
+require 'realm/runtime'
 
 class SampleOperation < Realm::ActionHandler
   def handle(params)
@@ -92,7 +92,7 @@ RSpec.describe Realm::ActionHandler do
 
   describe '.inject' do
     it 'injects dependencies from context' do
-      result = OperationWithInjection.(runtime: RuntimeMock.new(context: { dep1: 1, dep2: 2 }))
+      result = OperationWithInjection.(runtime: Realm::Runtime.new(dep1: 1, dep2: 2))
       expect(result).to eq(dep1: 1, dep2: 2)
     end
   end

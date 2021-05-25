@@ -5,7 +5,7 @@ require 'realm/event_router/internal_loop_gateway'
 require 'realm/event_handler'
 require 'realm/event_factory'
 require 'realm/event'
-require_relative '../support/runtime_mock'
+require 'realm/runtime'
 
 module InternalLoopGatewaySpec
   class SomethingHappenedEvent < Realm::Event
@@ -72,7 +72,7 @@ RSpec.describe Realm::EventRouter::InternalLoopGateway do
       event_logs.map do |el|
         described_class.new(
           event_factory: Realm::EventFactory.new(InternalLoopGatewaySpec),
-          runtime: RuntimeMock.new(context: { event_log: el }),
+          runtime: Realm::Runtime.new(event_log: el),
         )
       end
     end
