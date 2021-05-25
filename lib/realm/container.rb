@@ -34,27 +34,27 @@ module Realm
     end
 
     def create(klass, *args, **kwargs)
-      (klass.try(:dependencies) || []).each do |spec|
-        fn = -> { resolve_injectable(sanitize_injectable(spec[:injectable]), spec[:optional]) }
-        kwargs[spec[:name]] = spec[:lazy] ? fn : fn.call
+      (klass.try(:dependencies) || []).each do |d|
+        fn = -> { resolve_dependable(sanitize_dependable(d.dependable), d.optional?) }
+        kwargs[d.name] = d.lazy? ? fn : fn.call
       end
       klass.new(*args, **kwargs)
     end
 
     private
 
-    def sanitize_injectable(injectable)
-      return injectable.constantize if injectable.is_a?(String) && injectable.match(/^[A-Z]/)
+    def sanitize_dependable(dependable)
+      return dependable.constantize if dependable.is_a?(String) && dependable.match(/^[A-Z]/)
 
-      injectable
+      dependable
     end
 
-    def resolve_injectable(injectable, optional)
-      return self[injectable] if optional
+    def resolve_dependable(dependable, optional)
+      return self[dependable] if optional
 
-      raise DependencyMissing, injectable unless key?(injectable)
+      raise DependencyMissing, dependable unless key?(dependable)
 
-      resolve(injectable)
+      resolve(dependable)
     end
   end
 end
