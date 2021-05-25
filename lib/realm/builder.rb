@@ -51,9 +51,9 @@ module Realm
 
     def setup_container
       @container = Container.new
-      @container.register(DomainResolver, constantize(@domain_module))
-      @container.register(EventRouter, @event_gateways, prefix: @prefix) unless @event_gateways.empty?
-      @container.register(Runtime, @container)
+      @container.register_factory(DomainResolver, constantize(@domain_module))
+      @container.register_factory(EventRouter, @event_gateways, prefix: @prefix) unless @event_gateways.empty?
+      @container.register_factory(Runtime, @container)
       @container.register_all(logger: logger, **@dependencies)
     end
 

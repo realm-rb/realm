@@ -21,19 +21,15 @@ module Realm
        resolve(key) if key?(key)
     end
 
-    alias register_value register # the register method kwargs are destructuring event instances for some reason
-
-    def register(thing, *args, instantiate: true, memoize: true, **kwargs)
-      return super(thing, args[0]) unless thing.respond_to?(:new) && instantiate
-
-      super(thing, memoize: memoize) do
-        create(thing, *args, **kwargs)
+    def register_factory(klass, *args, memoize: true, **kwargs)
+      register(klass, memoize: memoize) do
+        create(klass, *args, **kwargs)
       end
     end
 
     def register_all(hash)
       hash.each_pair do |key, value|
-        register_value(key, value)
+        register(key, value)
       end
     end
 

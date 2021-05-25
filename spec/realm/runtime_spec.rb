@@ -8,7 +8,7 @@ RSpec.describe Realm::Runtime do
   let(:domain_resolver) { instance_double(Realm::DomainResolver, all_event_handlers: []) }
 
   before do
-    container.register(Realm::DomainResolver, domain_resolver, instantiate: false)
+    container.register(Realm::DomainResolver, domain_resolver)
   end
 
   subject { described_class.new(container) }
@@ -50,7 +50,7 @@ RSpec.describe Realm::Runtime do
   describe '#active_queues' do
     let(:event_router) { instance_double(Realm::EventRouter) }
     before do
-      container.register(Realm::EventRouter, event_router, instantiate: false)
+      container.register(Realm::EventRouter, event_router)
     end
 
     it 'calls active_queues on event router' do
@@ -78,7 +78,7 @@ RSpec.describe Realm::Runtime do
   context 'with event gateway configured' do
     let(:event_router) { instance_double(Realm::EventRouter) }
     before do
-      container.register(Realm::EventRouter, event_router, instantiate: false)
+      container.register(Realm::EventRouter, event_router)
     end
 
     describe '#trigger' do

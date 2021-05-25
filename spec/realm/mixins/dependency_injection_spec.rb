@@ -62,7 +62,7 @@ RSpec.describe Realm::Mixins::DependencyInjection do
   describe '.inject' do
     context 'with class constant' do
       it 'injects instance of given class from container' do
-        container.register(DependencyInjectionSpec::Foo, 123)
+        container.register_factory(DependencyInjectionSpec::Foo, 123)
         bar = container.create(DependencyInjectionSpec::Bar, value: 456)
         expect(bar.value).to eq 456
         expect(bar.foo_value).to eq 123
@@ -71,7 +71,7 @@ RSpec.describe Realm::Mixins::DependencyInjection do
 
     context 'with class name in string' do
       it 'injects instance of given class from container' do
-        container.register(DependencyInjectionSpec::Foo, 123)
+        container.register_factory(DependencyInjectionSpec::Foo, 123)
         baz = container.create(DependencyInjectionSpec::Baz)
         expect(baz.foo_value).to eq 123
       end
@@ -79,8 +79,8 @@ RSpec.describe Realm::Mixins::DependencyInjection do
 
     context 'with class circular dependencies and lazy option' do
       it 'injects instance of given class from container' do
-        container.register(DependencyInjectionSpec::Circular1)
-        container.register(DependencyInjectionSpec::Circular2)
+        container.register_factory(DependencyInjectionSpec::Circular1)
+        container.register_factory(DependencyInjectionSpec::Circular2)
         circular2 = container.resolve(DependencyInjectionSpec::Circular2)
         expect(circular2.send(:circular1)).to eq container.resolve(DependencyInjectionSpec::Circular1)
       end
