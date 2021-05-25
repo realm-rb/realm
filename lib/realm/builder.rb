@@ -16,17 +16,17 @@ module Realm
 
     with_options reader: false do
       param :root_module
-      option :database_url,         default: proc { nil }
-      option :prefix,               default: proc { nil }
+      option :database_url,         default: proc {}
+      option :prefix,               default: proc {}
       option :namespace,            default: proc { @root_module.to_s.underscore }
       option :domain_module,        default: proc { "#{@root_module}::Domain" }
       option :engine_class,         default: proc { "#{@root_module}::Engine" }
       option :engine_path,          default: proc { constantize(@engine_class)&.root }
-      option :logger,               default: proc { nil }
+      option :logger,               default: proc {}
       option :dependencies,         default: proc { {} }
       option :job_scheduler,        default: proc { {} }
       option :persistence_gateway,  default: proc { @database_url && { url: @database_url } }
-      option :event_gateway,        default: proc { nil }
+      option :event_gateway,        default: proc {}
       option :event_gateways,       default: proc {
         @event_gateway ? { default: { **@event_gateway, default: true } } : {}
       }
