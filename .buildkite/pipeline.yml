@@ -1,7 +1,6 @@
 steps:
-  - label: ":bomb: Test"
-    command: |
-      docker-compose up -d
-      docker-compose exec app sh -c ".buildkite/wait-for-it.sh localstack:4566"
-      docker-compose exec app bundle exec rspec
-      docker-compose exec app bundle exec rubocop
+  - label: ":bomb: Test realm-core"
+    command: docker-compose run app .buildkite/test-core.sh
+
+  - label: ":bomb: Test realm-elasticsearch"
+    command: docker-compose run app .buildkite/test-elasticsearch.sh
