@@ -44,17 +44,13 @@ module Realm
     private
 
     def sanitize_dependable(dependable)
-      return dependable.constantize if dependable.is_a?(String) && dependable.match(/^[A-Z]/)
-
-      dependable
+      dependable.is_a?(String) && dependable.match(/^[A-Z]/) ? dependable.constantize : dependable
     end
 
     def resolve_dependable(dependable, optional)
-      return self[dependable] if optional
+      raise DependencyMissing, dependable unless optional || key?(dependable)
 
-      raise DependencyMissing, dependable unless key?(dependable)
-
-      resolve(dependable)
+      self[dependable]
     end
   end
 end

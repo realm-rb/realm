@@ -13,7 +13,8 @@ module Realm
         def new(*args, **kwargs, &block)
           instance = allocate
           deps.each { |d| define_dependency_method(instance, kwargs, d) }
-          instance.send(:initialize, *args, **kwargs.reject { |k, _| deps.any? { |d| d.name == k } }, &block)
+          kwargs_without_dependencies = kwargs.reject { |k, _| deps.any? { |d| d.name == k } }
+          instance.send(:initialize, *args, **kwargs_without_dependencies, &block)
           instance
         end
 
