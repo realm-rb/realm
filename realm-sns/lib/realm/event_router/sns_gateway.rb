@@ -4,7 +4,7 @@ require 'securerandom'
 require 'active_support/core_ext/string'
 
 require 'realm/event_handler'
-require_relative './gateway'
+require 'realm/event_router/gateway'
 require_relative './sns_gateway/queue_manager'
 require_relative './sns_gateway/topic_adapter'
 require_relative './sns_gateway/worker'
