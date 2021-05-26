@@ -34,8 +34,8 @@ module Realm
     end
 
     def health
-      component_statuses = container.each.each_with_object({}) do |(name, component), map|
-        map[name] = component.health if component.respond_to?(:health)
+      component_statuses = container.each_with_object({}) do |(name, component), map|
+        map[name] = component.health if component.respond_to?(:health) && !component.is_a?(Runtime)
       end
       HealthStatus.combine(component_statuses)
     end
