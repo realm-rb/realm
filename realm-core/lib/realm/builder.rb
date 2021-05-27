@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/string'
-require 'active_support/core_ext/object/with_options'
-require 'dry-initializer'
 require 'realm/container'
 require 'realm/runtime'
 require 'realm/domain_resolver'
@@ -14,31 +12,17 @@ module Realm
   class Builder
     extend Dry::Initializer
 
-    with_options reader: false do
-      param :root_module
-      option :database_url,         default: proc {}
-      option :prefix,               default: proc {}
-      option :namespace,            default: proc { @root_module.to_s.underscore }
-      option :domain_module,        default: proc { "#{@root_module}::Domain" }
-      option :engine_class,         default: proc { "#{@root_module}::Engine" }
-      option :engine_path,          default: proc { constantize(@engine_class)&.root }
-      option :logger,               default: proc {}
-      option :dependencies,         default: proc { {} }
-      option :job_scheduler,        default: proc { {} }
-      option :persistence_gateway,  default: proc { @database_url && { url: @database_url } }
-      option :event_gateway,        default: proc {}
-      option :event_gateways,       default: proc {
-        @event_gateway ? { default: { **@event_gateway, default: true } } : {}
-      }
+    def self.setup(config)
+      new(config).setup
     end
 
-    def self.setup(root_module, **options)
-      new(root_module, **options).setup
+    def initialize(config)
+      @config = config
     end
 
     def setup
-      logger.info("Setting up #{@root_module} realm")
-      setup_container
+      logger.info("Setting up #{cfg.root_module} realm")
+      register_components
       config_persistence
       self
     end
@@ -49,19 +33,18 @@ module Realm
 
     private
 
-    def setup_container
-      @container = Container.new
-      @container.register_factory(DomainResolver, constantize(@domain_module))
-      @container.register_factory(EventRouter, @event_gateways, prefix: @prefix) unless @event_gateways.empty?
-      @container.register_factory(Runtime, @container)
-      @container.register_all(logger: logger, **@dependencies)
+    def register_components # rubocop:disable Metrics/AbcSize
+      container.register_factory(DomainResolver, constantize(cfg.domain_module))
+      container.register_factory(EventRouter, cfg.event_gateways, prefix: cfg.prefix) unless cfg.event_gateways.empty?
+      container.register_factory(Runtime, container)
+      container.register_all(logger: logger, **cfg.dependencies)
     end
 
     def config_persistence
-      return unless @persistence_gateway.present?
+      return unless cfg.persistence_gateway.present?
 
-      options = persistence_defaults.merge(@persistence_gateway)
-      Persistence.setup(@root_module, options)
+      options = persistence_defaults.merge(cfg.persistence_gateway)
+      Persistence.setup(cfg.root_module, options)
     end
 
     def constantize(*parts)
@@ -71,23 +54,28 @@ module Realm
     end
 
     def persistence_defaults
-      class_path = @engine_path && "#{@engine_path}/app/persistence/#{@namespace}"
+      class_path = cfg.engine_path && "#{cfg.engine_path}/app/persistence/#{cfg.namespace}"
       {
         type: :rom,
         container: @container,
         class_path: class_path,
         repos_path: class_path && "#{class_path}/repositories",
-        repos_module: "#{@root_module}::Repositories",
-        migration_path: @engine_path && "#{@engine_path}/db/migrate",
+        repos_module: "#{cfg.root_module}::Repositories",
+        migration_path: cfg.engine_path && "#{cfg.engine_path}/db/migrate",
       }
     end
 
+    def cfg
+      @config
+    end
+
+    def container
+      @container ||= Container.new
+    end
+
     def logger
-      return @logger if @logger
-
-      return Rails.logger if defined?(Rails)
-
-      @logger = Logger.new($stdout, level: ENV.fetch('LOG_LEVEL', :info).to_sym)
+      @logger ||= cfg.logger || (defined?(Rails) && Rails.logger) ||
+                  Logger.new($stdout, level: ENV.fetch('LOG_LEVEL', :info).to_sym)
     end
   end
 end

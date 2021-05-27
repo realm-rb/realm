@@ -8,7 +8,8 @@ module Realm
   class << self
     # Setup realm in test/console
     def setup(root_module, **options)
-      Realm::Builder.setup(root_module, **options)
+      config = Realm::Config.new(root_module: root_module, **options)
+      Realm::Builder.setup(config)
     end
 
     # Bind realm in service/engine
