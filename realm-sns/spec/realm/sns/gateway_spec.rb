@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'realm/event_router/sns_gateway'
+require 'realm/sns/gateway'
 require 'realm/event_handler'
 require 'realm/event_factory'
 require 'realm/event'
@@ -55,7 +55,7 @@ module SNSGatewaySpec
   end
 end
 
-RSpec.describe Realm::EventRouter::SNSGateway do
+RSpec.describe Realm::SNS::Gateway do
   def test_event_flow # rubocop:disable Metrics/AbcSize
     worker = subject.worker.start
     subject.trigger(:something_happened, foo: { bar: 123 })
@@ -117,7 +117,7 @@ RSpec.describe Realm::EventRouter::SNSGateway do
     it 'raises error' do
       expect {
         subject.register(SNSGatewaySpec::VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler)
-      }.to raise_error(Realm::EventRouter::SNSGateway::QueueManager::QueueNameTooLong)
+      }.to raise_error(Realm::SNS::Gateway::QueueManager::QueueNameTooLong)
     end
   end
 
@@ -134,8 +134,8 @@ RSpec.describe Realm::EventRouter::SNSGateway do
       subject.register(SNSGatewaySpec::SampleHandler)
       subject.register(SNSGatewaySpec::SampleAnyHandler)
       expect(subject.queues.size).to eq 2
-      expect(subject.queues[0]).to be_a Realm::EventRouter::SNSGateway::QueueAdapter
-      expect(subject.queues[1]).to be_a Realm::EventRouter::SNSGateway::QueueAdapter
+      expect(subject.queues[0]).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(subject.queues[1]).to be_a Realm::SNS::Gateway::QueueAdapter
     end
   end
 end

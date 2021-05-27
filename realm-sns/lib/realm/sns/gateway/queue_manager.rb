@@ -5,8 +5,8 @@ require 'realm/error'
 require_relative './queue_adapter'
 
 module Realm
-  class EventRouter
-    class SNSGateway < Gateway
+  module SNS
+    class Gateway < Realm::EventRouter::Gateway
       class QueueManager
         QueueNameTooLong = Realm::Error[
           "Queue name can be 80 chars long max, please provide custom EventHandler identifier if it's auto generated"]

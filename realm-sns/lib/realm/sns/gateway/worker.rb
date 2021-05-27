@@ -4,8 +4,8 @@ require 'active_support/core_ext/hash'
 require 'aws-sdk-sqs'
 
 module Realm
-  class EventRouter
-    class SNSGateway < Gateway
+  module SNS
+    class Gateway < Realm::EventRouter::Gateway
       class Worker
         def initialize(queue_map, event_factory:, event_processing_attempts: 3, logger: nil)
           @queue_map = queue_map

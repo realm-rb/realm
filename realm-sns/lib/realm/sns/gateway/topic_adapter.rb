@@ -3,8 +3,8 @@
 require 'aws-sdk-sns'
 
 module Realm
-  class EventRouter
-    class SNSGateway < Gateway
+  module SNS
+    class Gateway < Realm::EventRouter::Gateway
       # Provides cleaner SDK over Aws::SNS::Topic
       class TopicAdapter
         def initialize(topic_or_arn)

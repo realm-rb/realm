@@ -5,13 +5,13 @@ require 'active_support/core_ext/string'
 
 require 'realm/event_handler'
 require 'realm/event_router/gateway'
-require_relative './sns_gateway/queue_manager'
-require_relative './sns_gateway/topic_adapter'
-require_relative './sns_gateway/worker'
+require_relative './gateway/queue_manager'
+require_relative './gateway/topic_adapter'
+require_relative './gateway/worker'
 
 module Realm
-  class EventRouter
-    class SNSGateway < Gateway
+  module SNS
+    class Gateway < Realm::EventRouter::Gateway
       def initialize(topic_arn:, queue_prefix: nil, event_processing_attempts: 3, **)
         super
         @topic = TopicAdapter.new(topic_arn)
