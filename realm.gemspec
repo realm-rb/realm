@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dry-struct', '~> 1.3'
   spec.add_dependency 'dry-types', '~> 1.4'
   spec.add_dependency 'dry-validation', '~> 1.5'
-  spec.add_dependency 'elasticsearch', '7.11.1'
+  spec.add_dependency 'elasticsearch', '~> 7.13'
   spec.add_dependency 'rom', '~> 5.2'
   spec.add_dependency 'rom-sql', '~> 3.2'
   spec.add_dependency 'typhoeus'
