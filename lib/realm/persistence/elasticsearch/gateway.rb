@@ -28,8 +28,8 @@ module Realm
           index_names = Repository.subclasses.map(&:index_name)
           begin
             issues << 'One or more indexes missing' unless @client.indices.exists(index: index_names)
-          rescue Elasticsearch::Transport::Transport::Error => e
-            issues << "Transport error: #{e.full_message}"
+          rescue StandardError => e
+            issues << "Elasticsearch connection error: #{e.full_message}"
           end
           HealthStatus.from_issues(issues)
         end
