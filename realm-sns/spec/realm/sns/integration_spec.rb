@@ -46,6 +46,7 @@ RSpec.describe 'Integration of realm SNS with core' do
   let(:realm) do
     Realm.setup(
       TestIntegrationService,
+      plugins: :sns,
       engine_class: nil,
       prefix: 'integration-test',
       dependencies: dependencies,
@@ -54,17 +55,22 @@ RSpec.describe 'Integration of realm SNS with core' do
   end
   let(:worker) { realm.worker(event_processing_attempts: 1) }
 
+  before do
+    worker.start(poller_options: { wait_time_seconds: nil }) # disable wait time to speed up test
+  end
+
   after do
+    worker.stop
     sqs.queues.each(&:delete)
     sns.delete_topic(topic_arn: topic_arn)
   end
 
   it 'works for happy path' do
-    worker.start(poller_options: { wait_time_seconds: nil }) # disable wait time to speed up test
     realm.run('submission.publish', submission_id: 123)
-    worker.stop
 
-    expect(event_log.size).to eq(1)
+    wait_for do
+      event_log.size == 1
+    end
     expect(event_log[0]).to be_a(TestIntegrationService::Domain::Events::SubmissionPublished)
     expect(event_log[0].body.submission_id).to eq(123)
   end

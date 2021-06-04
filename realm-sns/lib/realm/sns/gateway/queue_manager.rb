@@ -8,8 +8,12 @@ module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway
       class QueueManager
-        QueueNameTooLong = Realm::Error[
-          "Queue name can be 80 chars long max, please provide custom EventHandler identifier if it's auto generated"]
+        class QueueNameTooLong < Realm::Error
+          def initialize(name, msg: "Queue name '#{name}' cannot be longer than 80 characters, " \
+                                    "please provide custom EventHandler identifier if it's auto generated")
+            super(msg)
+          end
+        end
 
         CleanupWithoutPrefix = Realm::Error[
           'Cleaning up queues without prefix is not allowed, it can lead to deleting queues from other apps']
@@ -27,7 +31,7 @@ module Realm
 
         def create(queue_name)
           name = prefix_name(queue_name)
-          raise QueueNameTooLong if name.size > 80
+          raise QueueNameTooLong, name if name.size > 80
 
           QueueAdapter.new(@sqs.create_queue(queue_name: name))
         end
