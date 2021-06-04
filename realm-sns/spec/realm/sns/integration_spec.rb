@@ -20,8 +20,7 @@ module TestIntegrationService
       class SampleEventHandler < Realm::EventHandler
         inject :event_log
 
-        on :submission_published
-        def handle_submission_published(event)
+        on :submission_published do |event|
           event_log << event
         end
       end
