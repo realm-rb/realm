@@ -40,7 +40,7 @@ module Realm
 
       def identifier(value = :undefined)
         if value == :undefined
-          defined?(@identifier) ? @identifier : name.underscore.gsub(/(domain|event_handlers?)/, '').gsub(%r{/+}, '-')
+          defined?(@identifier) ? @identifier : name.gsub(/(Domain|EventHandlers?)/, '').underscore.gsub(%r{/+}, '-')
         else
           @identifier = value
         end

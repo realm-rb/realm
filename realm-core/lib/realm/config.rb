@@ -15,12 +15,16 @@ module Realm
     option :engine_class,         default: proc { "#{root_module}::Engine" }
     option :engine_path,          default: proc { engine_class&.to_s&.safe_constantize&.root }
     option :logger,               default: proc {}
+    option :plugins,              default: proc { [] }, reader: false
     option :dependencies,         default: proc { {} }
-    option :job_scheduler,        default: proc { {} }
     option :persistence_gateway,  default: proc { database_url && { url: database_url } }
-    option :event_gateway,        default: proc {}
+    option :event_gateway,        default: proc {}, reader: false
     option :event_gateways,       default: proc {
-      event_gateway ? { default: { **event_gateway, default: true } } : {}
+      @event_gateway ? { default: { **@event_gateway, default: true } } : {}
     }
+
+    def plugins
+      Array(@plugins)
+    end
   end
 end

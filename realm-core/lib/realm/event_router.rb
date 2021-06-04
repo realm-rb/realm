@@ -7,6 +7,7 @@ require 'realm/domain_resolver'
 require 'realm/event_handler'
 require 'realm/event_factory'
 require 'realm/mixins/dependency_injection'
+require_relative 'event_router/internal_loop_gateway'
 
 module Realm
   class EventRouter
@@ -62,8 +63,9 @@ module Realm
     end
 
     def gateway_class(type)
-      require_relative "./event_router/#{type}_gateway"
-      self.class.const_get("#{type.to_s.camelize}Gateway")
+      return InternalLoopGateway if type == :internal_loop
+
+      runtime.container.resolve("event_router.gateway_classes.#{type}")
     end
 
     def instantiate_gateway(namespace, klass, config)

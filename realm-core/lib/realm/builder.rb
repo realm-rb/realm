@@ -7,6 +7,7 @@ require 'realm/domain_resolver'
 require 'realm/persistence'
 require 'realm/dispatcher'
 require 'realm/event_router'
+require 'realm/plugin'
 
 module Realm
   class Builder
@@ -22,7 +23,12 @@ module Realm
 
     def setup
       logger.info("Setting up #{cfg.root_module} realm")
-      register_components
+      register_domain_resolver
+      register_event_router
+      register_runtime
+      register_logger
+      register_dependencies
+      setup_plugins
       config_persistence
       self
     end
@@ -33,11 +39,32 @@ module Realm
 
     private
 
-    def register_components # rubocop:disable Metrics/AbcSize
+    def register_domain_resolver
       container.register_factory(DomainResolver, constantize(cfg.domain_module))
-      container.register_factory(EventRouter, cfg.event_gateways, prefix: cfg.prefix) unless cfg.event_gateways.empty?
+    end
+
+    def register_event_router
+      return if cfg.event_gateways.empty?
+
+      container.register_factory(EventRouter, cfg.event_gateways, prefix: cfg.prefix)
+    end
+
+    def register_runtime
       container.register_factory(Runtime, container)
-      container.register_all(logger: logger, **cfg.dependencies)
+    end
+
+    def register_logger
+      container.register(:logger, logger)
+    end
+
+    def register_dependencies
+      container.register_all(**cfg.dependencies)
+    end
+
+    def setup_plugins
+      Plugin.descendants.each do |plugin|
+        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.name)
+      end
     end
 
     def config_persistence
