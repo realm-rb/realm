@@ -18,19 +18,20 @@ module Realm
       register_all(hash)
     end
 
-    def [](key)
-      resolve(key) if key?(key)
-    end
-
-    def register_factory(klass, *args, memoize: true, **kwargs)
-      register(klass, memoize: memoize) do
-        create(klass, *args, **kwargs)
-      end
+    def register(key, contents = nil, options = {}, &block)
+      options[:klass] ||= contents.class if contents && !contents.is_a?(::Hash)
+      super(key, contents, options, &block)
     end
 
     def register_all(hash)
       hash.each_pair do |key, value|
         register(key, value)
+      end
+    end
+
+    def register_factory(klass, *args, as: nil, memoize: true, **kwargs) # rubocop:disable Naming/MethodParameterName
+      register(as || klass, klass: klass, memoize: memoize) do
+        create(klass, *args, **kwargs)
       end
     end
 
@@ -40,6 +41,16 @@ module Realm
         kwargs[d.name] = d.lazy? ? fn : fn.call
       end
       klass.new(*args, **kwargs)
+    end
+
+    def [](key)
+      resolve(key) if key?(key)
+    end
+
+    def resolve_all(klass)
+      _container.each_with_object([]) do |(_, item), all|
+        all << item.call if item.options[:klass] <= klass
+      end
     end
 
     private
