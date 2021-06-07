@@ -63,7 +63,7 @@ module Realm
 
     def setup_plugins
       Plugin.descendants.each do |plugin|
-        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.name)
+        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.plugin_name)
       end
     end
 
