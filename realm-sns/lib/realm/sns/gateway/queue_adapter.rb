@@ -4,8 +4,8 @@ require 'realm/event_router/gateway'
 require 'realm/mixins/decorator'
 
 module Realm
-  class EventRouter
-    class SNSGateway < Gateway
+  module SNS
+    class Gateway < Realm::EventRouter::Gateway
       # Provides cleaner SDK over Aws::SQS::Queue
       class QueueAdapter
         include Mixins::Decorator[:@queue]
