@@ -63,33 +63,20 @@ module Realm
 
     def setup_plugins
       Plugin.descendants.each do |plugin|
-        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.name)
+        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.plugin_name)
       end
     end
 
     def config_persistence
       return unless cfg.persistence_gateway.present?
 
-      options = persistence_defaults.merge(cfg.persistence_gateway)
-      Persistence.setup(cfg.root_module, options)
+      Persistence.setup(cfg.root_module, cfg.persistence_gateway)
     end
 
     def constantize(*parts)
       return parts[0] unless parts[0].is_a?(String)
 
       parts.join('::').safe_constantize
-    end
-
-    def persistence_defaults
-      class_path = cfg.engine_path && "#{cfg.engine_path}/app/persistence/#{cfg.namespace}"
-      {
-        type: :rom,
-        container: @container,
-        class_path: class_path,
-        repos_path: class_path && "#{class_path}/repositories",
-        repos_module: "#{cfg.root_module}::Repositories",
-        migration_path: cfg.engine_path && "#{cfg.engine_path}/db/migrate",
-      }
     end
 
     def cfg

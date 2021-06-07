@@ -17,7 +17,7 @@ module Realm
     option :logger,               default: proc {}
     option :plugins,              default: proc { [] }, reader: false
     option :dependencies,         default: proc { {} }
-    option :persistence_gateway,  default: proc { database_url && { url: database_url } }
+    option :persistence_gateway,  default: proc { database_url && { type: :rom, url: database_url } }, reader: false
     option :event_gateway,        default: proc {}, reader: false
     option :event_gateways,       default: proc {
       @event_gateway ? { default: { **@event_gateway, default: true } } : {}
@@ -25,6 +25,18 @@ module Realm
 
     def plugins
       Array(@plugins)
+    end
+
+    def persistence_gateway
+      return unless @persistence_gateway
+
+      class_path = engine_path && "#{engine_path}/app/persistence/#{namespace}"
+      {
+        class_path: class_path,
+        repos_path: class_path && "#{class_path}/repositories",
+        repos_module: "#{root_module}::Repositories",
+        migration_path: engine_path && "#{engine_path}/db/migrate",
+      }.merge(@persistence_gateway)
     end
   end
 end
