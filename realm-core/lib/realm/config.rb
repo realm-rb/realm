@@ -28,15 +28,29 @@ module Realm
     end
 
     def persistence_gateway
-      return unless @persistence_gateway
+      return {} unless @persistence_gateway
 
       class_path = engine_path && "#{engine_path}/app/persistence/#{namespace}"
+      repos_path = class_path && "#{class_path}/repositories"
+      repos_module = "#{root_module}::Repositories"
       {
         class_path: class_path,
-        repos_path: class_path && "#{class_path}/repositories",
-        repos_module: "#{root_module}::Repositories",
+        repos_path: repos_path,
+        repos_module: repos_module,
         migration_path: engine_path && "#{engine_path}/db/migrate",
+        repositories: repositories(repos_path, repos_module),
       }.merge(@persistence_gateway)
+    end
+
+    private
+
+    def repositories(repos_path, repos_module)
+      return [] unless repos_path
+
+      Dir[File.join(repos_path, '**', '*.rb')].each_with_object([]) do |filename, all|
+        matches = %r{^#{repos_path}/(.+)\.rb$}.match(filename)
+        all << "#{repos_module}::#{matches[1].camelize}".constantize if matches
+      end
     end
   end
 end

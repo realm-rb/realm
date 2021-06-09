@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/with_options'
 
 module Realm
@@ -23,43 +24,46 @@ module Realm
 
     with_options reader: false do
       param :root_module
-      option :container
+      param :container
       option :type
       option :url
-      option :repos_module
       option :class_path
       option :migration_path
-      option :repos_path
+      option :repositories
     end
 
     class << self
-      def setup(root_module, **options)
-        new(root_module, **options).setup
+      def setup(...)
+        new(...).setup
       end
     end
 
     def setup
-      client = client_klass.configure(
+      register_repos
+    end
+
+    private
+
+    def gateway
+      @gateway ||= @type == :rom ? rom_gateway : @container.resolve('persistence.gateway')
+    end
+
+    # Temporary solution until rom plugin is extracted from core
+    def rom_gateway
+      return @container[@type] if @container.key?(@type)
+
+      gateway = ROM::Gateway.configure(
         url: @url,
         root_module: @root_module,
         class_path: @class_path,
         migration_path: @migration_path,
       )
-      # FIXME: check how to deal with the forking
-      @container.register(@type, client)
-      register_repos(client)
+      @container.register(@type, gateway)
     end
 
-    private
-
-    def register_repos(client)
-      return unless @repos_path.present?
-
-      Dir[File.join(@repos_path, '**', '*.rb')].each do |filename|
-        matches = %r{^#{@repos_path}/(.+)\.rb$}.match(filename)
-        next unless matches
-
-        @container.register("#{matches[1]}_repo", constantize(@repos_module, matches[1].camelize).new(client))
+    def register_repos
+      @repositories.each do |repo_class|
+        @container.register_factory(repo_class, gateway, as: "#{repo_class.name.demodulize.underscore}_repo")
       end
     end
 
@@ -67,17 +71,6 @@ module Realm
       return parts[0] unless parts[0].is_a?(String)
 
       parts.join('::').safe_constantize
-    end
-
-    def client_klass
-      @client_klass ||= client_for_type(@type)
-    end
-
-    def client_for_type(_type)
-      return ROM::Gateway if @type == :rom
-      return Elasticsearch::Gateway if @type == :elasticsearch
-
-      raise InvalidPersistanceType
     end
   end
 end

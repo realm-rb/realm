@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string'
 require 'rom-repository'
 require_relative 'read_only_repository_wrapper'
 
@@ -25,6 +26,12 @@ module Realm
 
         def self.new(*)
           Isolated.new(super)
+        end
+
+        def self.repo_name(value = :not_provided)
+          @repo_name = value.to_sym unless value == :not_provided
+          @repo_name = name.demodulize.underscore unless defined?(@repo_name)
+          @repo_name
         end
 
         def readonly
