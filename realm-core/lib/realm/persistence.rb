@@ -59,6 +59,7 @@ module Realm
         migration_path: @migration_path,
       )
       @container.register(@type, gateway)
+      gateway
     end
 
     def register_repos
