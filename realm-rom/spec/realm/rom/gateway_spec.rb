@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 require 'rom'
-require 'realm/persistence/rom/gateway'
+require 'realm/rom/gateway'
 
 module RomGatewayTest; end
 
-RSpec.describe Realm::Persistence::ROM::Gateway do
+RSpec.describe Realm::ROM::Gateway do
   describe '#health' do
     subject do
       described_class.new(
