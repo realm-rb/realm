@@ -2,6 +2,8 @@
 
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/with_options'
+require 'dry-initializer'
+require 'realm/error'
 
 module Realm
   class Persistence

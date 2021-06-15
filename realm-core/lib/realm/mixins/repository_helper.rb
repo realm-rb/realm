@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'realm/error'
+
 module Realm
   module Mixins
     module RepositoryHelper

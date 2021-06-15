@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require_relative './rom/read_only_repository_wrapper'
+require 'realm/persistence'
+require 'realm/error'
 
 module Realm
   class Persistence

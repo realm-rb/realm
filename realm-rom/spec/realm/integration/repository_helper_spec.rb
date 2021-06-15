@@ -3,6 +3,7 @@
 require 'realm/runtime'
 require 'realm/query_handler'
 require 'realm/mixins/repository_helper'
+require 'realm/rom/repository'
 
 module TestMixinsRepositoryHelper
   module Domain
@@ -21,38 +22,40 @@ module TestMixinsRepositoryHelper
     end
   end
 
-  class ThingRepo
-    def initialize(things = [], readonly = false)
-      @things = things
-      @readonly = readonly
-    end
+  class Things < ROM::Relation[:sql]
+    schema(:things, infer: true)
+  end
+
+  class ThingRepo < Realm::ROM::Repository[:things]
+    auto_struct false
+    commands :create
 
     def all
-      @things
-    end
-
-    def create(thing)
-      raise 'Readonly' if @readonly
-
-      @things << thing
-    end
-
-    def readonly
-      self.class.new(@things, true)
+      things.to_a
     end
   end
 
   RSpec.describe Realm::Mixins::RepositoryHelper do
     context 'for query handler' do
-      let(:thing_repo) { ThingRepo.new.tap { |r| r.create(name: 'box') } }
+      let(:rom) do
+        ROM.container(:sql, 'sqlite::memory') do |conf|
+          conf.default.create_table(:things) do
+            column :name, String, null: false
+          end
+          conf.register_relation(Things)
+        end
+      end
+      let(:thing_repo) { ThingRepo.new(rom).tap { |r| r.create(name: 'box') } }
       let(:runtime) { Realm::Runtime.new(sample_repo: thing_repo) }
 
-      it 'auto injects repo' do
+      it 'auto injects repo and allows read' do
         expect(Domain::Sample::QueryHandlers.(action: :read, runtime: runtime)).to eq([{ name: 'box' }])
       end
 
-      it 'auto injects repo in readonly mode if supported' do
-        expect { Domain::Sample::QueryHandlers.(action: :write, runtime: runtime) }.to raise_error('Readonly')
+      it 'auto injects repo and forbids write' do
+        expect { Domain::Sample::QueryHandlers.(action: :write, runtime: runtime) }.to raise_error(
+          Realm::Persistence::RepositoryIsReadOnly,
+        )
       end
     end
 

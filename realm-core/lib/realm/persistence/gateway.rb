@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'rom'
-
 module Realm
   class Persistence
     class Gateway
