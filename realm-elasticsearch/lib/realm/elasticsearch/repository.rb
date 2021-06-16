@@ -48,8 +48,9 @@ module Realm
 
       def delete(id:)
         client.delete(index: index_name, type: '_doc', id: id, refresh: refresh?)
+        true
       rescue ::Elasticsearch::Transport::Transport::Errors::NotFound
-        # ignore
+        false
       end
 
       def search_by(params)
