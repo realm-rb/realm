@@ -63,7 +63,7 @@ module Realm
     end
 
     def gateway_class(type)
-      return InternalLoopGateway if type == :internal_loop
+      return InternalLoopGateway if type.to_s == 'internal_loop'
 
       runtime.container.resolve("event_router.gateway_classes.#{type}")
     end

@@ -70,7 +70,7 @@ module Realm
     def config_persistence
       return unless cfg.persistence_gateway.present?
 
-      Persistence.setup(cfg.root_module, cfg.persistence_gateway)
+      Persistence.setup(cfg.root_module, container, cfg.persistence_gateway)
     end
 
     def constantize(*parts)
