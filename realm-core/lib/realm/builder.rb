@@ -11,8 +11,6 @@ require 'realm/plugin'
 
 module Realm
   class Builder
-    extend Dry::Initializer
-
     def self.setup(config)
       new(config).setup
     end
@@ -70,7 +68,7 @@ module Realm
     def config_persistence
       return unless cfg.persistence_gateway.present?
 
-      Persistence.setup(cfg.root_module, container, cfg.persistence_gateway)
+      Persistence.setup(container, cfg.persistence_gateway[:repositories])
     end
 
     def constantize(*parts)
