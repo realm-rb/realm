@@ -9,6 +9,12 @@ services:
       DEFAULT_REGION: eu-west-1
       DOCKER_HOST: unix:///var/run/docker.sock
 
+  postgres:
+    image: postgres:11.6
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+
   elasticsearch:
     image: elasticsearch:7.12.1
     environment:
@@ -34,6 +40,7 @@ services:
       context: .
     depends_on:
       - localstack
+      - postgres
       - elasticsearch
     command: ["cat"]
     tty: true
@@ -46,3 +53,4 @@ services:
       AWS_ACCESS_KEY_ID: fake-access-key-id
       AWS_SECRET_ACCESS_KEY: fake-secret-access-key
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      DATABASE_URL: postgresql://postgres:password@postgres/db

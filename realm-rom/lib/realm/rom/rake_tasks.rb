@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
+require 'rake'
 require 'active_support/core_ext/string'
 
 module Realm
   module ROM
-    module Tasks
+    module RakeTasks
       # rubocop:disable Metrics/AbcSize, Metrics/BlockLength, Metrics/MethodLength
-      def self.setup_rake_tasks(engine_name, engine_root: Rails.root.join('engines', engine_name.to_s))
-        return unless ENV['DATABASE_URL']
+      def self.setup(engine_name, engine_root: Rails.root.join('engines', engine_name.to_s),
+                     db_url: ENV['DATABASE_URL'])
+        return unless db_url
 
         options = { search_path: engine_name.to_s, migrator: { path: "#{engine_root}/db/migrate" } }
-        config = ::ROM::Configuration.new(:sql, ENV['DATABASE_URL'], options)
+        config = ::ROM::Configuration.new(:sql, db_url, options)
         gateway = config.gateways[:default]
 
         Rake.application.in_namespace(:db) do

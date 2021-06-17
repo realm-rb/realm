@@ -9,7 +9,7 @@ module Realm
       def self.setup(config, container)
         return unless config.persistence_gateway[:type] == :rom
 
-        gateway = Gateway.configure(config.persistence_gateway)
+        gateway = Gateway.new(config.persistence_gateway)
         container.register('persistence.gateway', gateway)
         container.register(:rom, gateway) # for backward compatibility as we access it a lot in tests
       end
