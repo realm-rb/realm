@@ -22,7 +22,7 @@ module TestMixinsRepositoryHelper
   end
 
   class ThingRepo
-    def initialize(things = [], readonly = false)
+    def initialize(things = [], readonly: false)
       @things = things
       @readonly = readonly
     end
@@ -38,7 +38,7 @@ module TestMixinsRepositoryHelper
     end
 
     def readonly
-      self.class.new(@things, true)
+      self.class.new(@things, readonly: true)
     end
   end
 
