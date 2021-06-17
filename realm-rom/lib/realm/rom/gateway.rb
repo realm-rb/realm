@@ -46,7 +46,7 @@ module Realm
       end
 
       def default_gateway
-        @client.gateways[:default]
+        client.gateways[:default]
       end
     end
   end
