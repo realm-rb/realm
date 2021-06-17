@@ -3,25 +3,14 @@
 require 'typhoeus'
 require 'elasticsearch'
 require 'realm/health_status'
-require 'realm/persistence/gateway'
 require_relative 'repository'
 
 module Realm
   module Elasticsearch
-    class Gateway < Realm::Persistence::Gateway
-      def initialize(url:, **options) # rubocop:disable Lint/MissingSuper
+    class Gateway
+      def initialize(url:, **options)
         @url = url
         @client_options = options.slice(:adapter, :retry_on_failure, :request_timeout)
-      end
-
-      def configure
-        config = {
-          url: @url,
-          adapter: :typhoeus,
-          retry_on_failure: 3,
-          request_timeout: 30,
-        }
-        @client = ::Elasticsearch::Client.new(config.merge(@client_options))
       end
 
       def health
@@ -33,6 +22,29 @@ module Realm
           issues << "Elasticsearch connection error: #{e.full_message}"
         end
         HealthStatus.from_issues(issues)
+      end
+
+      def method_missing(...)
+        client.send(...)
+      end
+
+      def respond_to_missing?(...)
+        client.respond_to?(...)
+      end
+
+      private
+
+      def client
+        @client ||= ::Elasticsearch::Client.new(default_config.merge(@client_options))
+      end
+
+      def default_config
+        {
+          url: @url,
+          adapter: :typhoeus,
+          retry_on_failure: 3,
+          request_timeout: 30,
+        }
       end
     end
   end
