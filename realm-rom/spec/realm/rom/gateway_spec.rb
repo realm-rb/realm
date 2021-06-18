@@ -40,7 +40,7 @@ RSpec.describe Realm::ROM::Gateway do
     context 'with connection issue' do
       let(:test_connection) { false }
 
-      it 'returns green health status' do
+      it 'returns red health status' do
         health = subject.health
         expect(health.code).to eq(:red)
         expect(health.issues).to include('Cannot connect to db')
@@ -50,7 +50,7 @@ RSpec.describe Realm::ROM::Gateway do
     context 'with pending migrations' do
       let(:pending_migrations) { true }
 
-      it 'returns green health status' do
+      it 'returns red health status' do
         health = subject.health
         expect(health.code).to eq(:red)
         expect(health.issues).to include('Pending migrations')
