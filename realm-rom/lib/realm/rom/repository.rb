@@ -2,6 +2,7 @@
 
 require 'active_support/core_ext/string'
 require 'rom-repository'
+require 'rom-sql'
 require 'realm/error'
 require_relative 'read_only_repository_wrapper'
 
@@ -17,7 +18,7 @@ module Realm
         def method_missing(*args, &block)
           result = @repo.send(*args, &block)
           result.is_a?(::ROM::Relation) ? result.to_a : result
-        rescue ROM::SQL::UniqueConstraintError
+        rescue ::ROM::SQL::UniqueConstraintError
           raise Realm::UniqueConstraintError
         end
 
