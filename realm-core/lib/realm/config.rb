@@ -34,6 +34,7 @@ module Realm
       repos_path = class_path && "#{class_path}/repositories"
       repos_module = "#{root_module}::Repositories"
       {
+        root_module: root_module,
         class_path: class_path,
         repos_path: repos_path,
         repos_module: repos_module,

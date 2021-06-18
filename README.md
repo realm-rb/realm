@@ -31,3 +31,10 @@ tables. Each relation class represents one table.
 ## Where to put my code as it grows?
 
 TODO
+
+
+## Roadmap
+
+- [ ] Support Ruby 3
+- [ ] Make it work outside of Rails engines
+- [ ] Support multiple persistence gateways in one runtime

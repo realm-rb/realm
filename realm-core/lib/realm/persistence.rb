@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/string'
-require 'active_support/core_ext/object/with_options'
+require 'realm/error'
 
 module Realm
   class Persistence
@@ -20,22 +20,13 @@ module Realm
       end
     end
 
-    extend Dry::Initializer
-
-    with_options reader: false do
-      param :root_module
-      param :container
-      option :type
-      option :url
-      option :class_path
-      option :migration_path
-      option :repositories
+    def self.setup(...)
+      new(...).setup
     end
 
-    class << self
-      def setup(...)
-        new(...).setup
-      end
+    def initialize(container, repositories)
+      @container = container
+      @repositories = repositories
     end
 
     def setup
@@ -45,21 +36,7 @@ module Realm
     private
 
     def gateway
-      @gateway ||= @type == :rom ? rom_gateway : @container.resolve('persistence.gateway')
-    end
-
-    # Temporary solution until rom plugin is extracted from core
-    def rom_gateway
-      return @container[@type] if @container.key?(@type)
-
-      gateway = ROM::Gateway.configure(
-        url: @url,
-        root_module: @root_module,
-        class_path: @class_path,
-        migration_path: @migration_path,
-      )
-      @container.register(@type, gateway)
-      gateway
+      @gateway ||= @container.resolve('persistence.gateway')
     end
 
     def register_repos

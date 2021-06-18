@@ -5,5 +5,8 @@ steps:
   - label: ":bomb: Test realm-sns"
     command: docker-compose run app .buildkite/test-sns.sh
 
+  - label: ":bomb: Test realm-rom"
+    command: docker-compose run app .buildkite/test-rom.sh
+
   - label: ":bomb: Test realm-elasticsearch"
     command: docker-compose run app .buildkite/test-elasticsearch.sh

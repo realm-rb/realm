@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom-sql'
 require 'active_support/core_ext/string'
+require 'realm/error'
 require 'realm/mixins/context_injection'
 require 'realm/mixins/reactive'
 require 'realm/mixins/repository_helper'
@@ -84,10 +84,8 @@ module Realm
     def call(event)
       event_to_methods(event).each do |method_name|
         send(method_name, event)
-      rescue ROM::SQL::UniqueConstraintError => e # TODO: wrap it in more generic error to avoid dependency on ROM
-        # The unique constraints are way to deal with duplicated events which can happen in most distributed messaging
-        # systems. Unless there are large amount of them we just ignore it and skip the event processing.
-        context[:logger]&.warn(e)
+      rescue Realm::UniqueConstraintError => e
+        context[:logger]&.warn(e.full_message)
       end
     end
 

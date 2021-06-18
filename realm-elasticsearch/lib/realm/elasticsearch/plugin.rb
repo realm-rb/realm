@@ -9,8 +9,7 @@ module Realm
       def self.setup(config, container)
         return unless config.persistence_gateway[:type] == :elasticsearch
 
-        gateway = Gateway.configure(config.persistence_gateway)
-        container.register('persistence.gateway', gateway)
+        container.register_factory(Gateway, **config.persistence_gateway, as: 'persistence.gateway')
       end
     end
   end
