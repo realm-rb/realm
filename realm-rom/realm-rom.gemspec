@@ -5,7 +5,7 @@ $LOAD_PATH.push File.expand_path('lib', __dir__)
 version = File.read(File.expand_path('../VERSION', __dir__)).strip
 
 Gem::Specification.new do |spec|
-  spec.name        = 'realm-sns'
+  spec.name        = 'realm-rom'
   spec.version     = version
   spec.authors     = ['developers@reevoo.com']
   spec.summary     = 'ROM SQL persistence plugin for Realm'
