@@ -17,7 +17,7 @@ module Realm
         issues = []
         index_names = Repository.subclasses.map(&:index_name)
         begin
-          issues << 'One or more indexes missing' unless @client.indices.exists(index: index_names)
+          issues << 'One or more indexes missing' unless client.indices.exists(index: index_names)
         rescue StandardError => e
           issues << "Elasticsearch connection error: #{e.full_message}"
         end
