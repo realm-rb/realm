@@ -59,6 +59,4 @@ module Realm
       @validation_result.errors(full: true).to_h
     end
   end
-
-  class UniqueConstraintError < Error; end
 end
