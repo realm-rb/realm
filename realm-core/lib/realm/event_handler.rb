@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/string'
-require 'realm/error'
+require 'realm/persistence'
 require 'realm/mixins/context_injection'
 require 'realm/mixins/reactive'
 require 'realm/mixins/repository_helper'
@@ -84,7 +84,7 @@ module Realm
     def call(event)
       event_to_methods(event).each do |method_name|
         send(method_name, event)
-      rescue Realm::UniqueConstraintError => e
+      rescue Realm::Persistence::Conflict => e
         context[:logger]&.warn(e.full_message)
       end
     end
