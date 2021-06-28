@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string'
 require 'realm/error'
 require 'realm/event'
 
@@ -19,7 +20,7 @@ module Realm
     def event_class_for(event_type)
       return event_type if event_type.respond_to?(:new)
 
-      class_name = "#{@events_module}::#{event_type.to_s.camelize}"
+      class_name = "#{@events_module}::#{event_type.to_s.gsub('.', '/').camelize}"
       klass = class_name.safe_constantize || "#{class_name}Event".safe_constantize
       return klass if klass
 
