@@ -17,7 +17,7 @@ module Realm
       end
 
       def add_listener(event_type, listener)
-        (@listener_map[event_type] ||= []) << listener
+        (@listener_map[event_type.to_sym] ||= []) << listener
       end
 
       def trigger(event_type, attributes = {})
