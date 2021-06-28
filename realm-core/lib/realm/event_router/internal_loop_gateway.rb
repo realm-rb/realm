@@ -39,7 +39,7 @@ module Realm
       private
 
       def find_listeners(event_type)
-        @listener_map.fetch_values(event_type, :any) { [] }.flatten
+        @listener_map.fetch_values(event_type.to_sym, :any) { [] }.flatten
       end
 
       def gateways
