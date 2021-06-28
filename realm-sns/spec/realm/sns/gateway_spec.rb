@@ -21,6 +21,18 @@ module SNSGatewaySpec
     end
   end
 
+  class ScopedFooEvent < Realm::Event
+    def self.type
+      'custom_scope.foo'
+    end
+
+    body_struct do
+      attribute :foo do
+        attribute :bar, T::Integer
+      end
+    end
+  end
+
   class SampleHandler < Realm::EventHandler
     inject :event_log
 
@@ -53,12 +65,20 @@ module SNSGatewaySpec
       event_log << event
     end
   end
+
+  class ScopedEventHandler < Realm::EventHandler
+    inject :event_log
+
+    on 'custom_scope.foo' do |event|
+      event_log << event
+    end
+  end
 end
 
 RSpec.describe Realm::SNS::Gateway do
-  def test_event_flow # rubocop:disable Metrics/AbcSize
+  def test_event_flow(event_type = :something_happened) # rubocop:disable Metrics/AbcSize
     worker = subject.worker.start
-    subject.trigger(:something_happened, foo: { bar: 123 })
+    subject.trigger(event_type, foo: { bar: 123 })
     worker.stop
 
     expect(event_log.size).to eq(1)
@@ -101,7 +121,7 @@ RSpec.describe Realm::SNS::Gateway do
     it 'handles events' do
       subject.register(SNSGatewaySpec::SampleHandler)
       test_event_flow
-      expect(queue_names).to include('something_happened-sns_gateway_spec-sample_handler')
+      expect(queue_names).to include('something_happened-sns_gateway_spec-sample')
     end
   end
 
@@ -109,7 +129,7 @@ RSpec.describe Realm::SNS::Gateway do
     it 'handles events' do
       subject.register(SNSGatewaySpec::SampleAnyHandler)
       test_event_flow
-      expect(queue_names).to include('any-sns_gateway_spec-sample_any_handler')
+      expect(queue_names).to include('any-sns_gateway_spec-sample_any')
     end
   end
 
@@ -126,6 +146,14 @@ RSpec.describe Realm::SNS::Gateway do
       subject.register(SNSGatewaySpec::CustomIdentifierHandler)
       test_event_flow
       expect(queue_names).to include('something_happened-short_and_sweet')
+    end
+  end
+
+  context 'with scoped event' do
+    it 'handles events' do
+      subject.register(SNSGatewaySpec::ScopedEventHandler)
+      test_event_flow('custom_scope.foo')
+      expect(queue_names).to include('custom_scope_foo-sns_gateway_spec-scoped')
     end
   end
 

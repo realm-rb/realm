@@ -46,7 +46,7 @@ module Realm
       private
 
       def provide_queue(event_type, listener)
-        queue_name = [event_type.to_s, queue_suffix(listener)].join('-')
+        queue_name = [event_type.to_s.gsub('.', '_'), queue_suffix(listener)].join('-')
         queue = queue_manager.provide(queue_name)
         @topic.subscribe(event_type, queue)
         queue
