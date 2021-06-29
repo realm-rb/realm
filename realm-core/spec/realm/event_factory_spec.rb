@@ -55,8 +55,8 @@ RSpec.describe Realm::EventFactory do
       end
     end
 
-    context 'with scoped events' do
-      it 'creates correct event' do
+    context 'with scoped event type' do
+      it 'creates correct event instance' do
         event = subject.create_event('custom_scope.foo', number: 2)
         expect(event).to be_a EventFactorySpecEvents::ScopedFoo
         expect(event.body.number).to eq 2
