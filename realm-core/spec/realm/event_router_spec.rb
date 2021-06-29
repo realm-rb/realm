@@ -62,15 +62,20 @@ RSpec.describe Realm::EventRouter do
   describe '#trigger' do
     it 'triggers event on gateway for corresponding namespace' do
       expect(gateway1).to receive(:trigger).with('sample', foo: 123)
-      subject.trigger('ns1.sample', foo: 123)
+      subject.trigger('ns1/sample', foo: 123)
 
       expect(gateway2).to receive(:trigger).with('sample', foo: 456)
-      subject.trigger('ns2.sample', foo: 456)
+      subject.trigger('ns2/sample', foo: 456)
     end
 
     it 'triggers event on default gateway if no namespace is specified' do
       expect(gateway2).to receive(:trigger).with(:sample, foo: 123)
       subject.trigger(:sample, foo: 123)
+    end
+
+    it 'triggers scoped events' do
+      expect(gateway2).to receive(:trigger).with('sample.crated', foo: 123)
+      subject.trigger('sample.crated', foo: 123)
     end
   end
 

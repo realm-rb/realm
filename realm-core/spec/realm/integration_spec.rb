@@ -30,7 +30,7 @@ module TestIntegrationService
 
         class Publish < Realm::CommandHandler
           def handle(submission_id:, **)
-            trigger(:submission_published, submission_id: submission_id)
+            trigger('custom_scoped.submission_published', submission_id: submission_id)
           end
         end
       end
@@ -44,7 +44,7 @@ module TestIntegrationService
           run :publish, event.body
         end
 
-        on :submission_published
+        on 'custom_scoped.submission_published'
         def handle_submission_published(event)
           event_log << event
         end
@@ -59,6 +59,10 @@ module TestIntegrationService
       end
 
       class SubmissionPublished < Realm::Event
+        def self.type
+          'custom_scoped.submission_published'
+        end
+
         body_struct do
           attribute :submission_id, T::Integer
         end

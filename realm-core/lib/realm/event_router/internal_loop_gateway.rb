@@ -17,7 +17,7 @@ module Realm
       end
 
       def add_listener(event_type, listener)
-        (@listener_map[event_type] ||= []) << listener
+        (@listener_map[event_type.to_sym] ||= []) << listener
       end
 
       def trigger(event_type, attributes = {})
@@ -39,7 +39,7 @@ module Realm
       private
 
       def find_listeners(event_type)
-        @listener_map.fetch_values(event_type, :any) { [] }.flatten
+        @listener_map.fetch_values(event_type.to_sym, :any) { [] }.flatten
       end
 
       def gateways

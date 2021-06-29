@@ -14,6 +14,7 @@ module Realm
       end
 
       def register(handler_class)
+        # TODO: validate event_types for existence of matching class
         handler_class.event_types.each do |event_type|
           add_listener(event_type, handler_class.bind_runtime(@runtime))
         end

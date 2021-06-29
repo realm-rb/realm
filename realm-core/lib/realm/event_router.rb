@@ -31,7 +31,7 @@ module Realm
     end
 
     def trigger(identifier, attributes = {})
-      namespace, event_type = identifier.to_s.include?('.') ? identifier.split('.') : [nil, identifier]
+      namespace, event_type = identifier.to_s.include?('/') ? identifier.split('/') : [nil, identifier]
       gateway_for(namespace).trigger(event_type, attributes)
     end
 

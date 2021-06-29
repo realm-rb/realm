@@ -16,6 +16,12 @@ module EventFactorySpecEvents
       attribute :text, T::Strict::String
     end
   end
+
+  class ScopedFoo < Foo
+    def self.type
+      'custom_scope.foo'
+    end
+  end
 end
 
 RSpec.describe Realm::EventFactory do
@@ -46,6 +52,14 @@ RSpec.describe Realm::EventFactory do
       it 'correlates events and set cause' do
         expect(bar_event.head.correlation_id).to eq foo_event.head.correlation_id
         expect(bar_event.head.cause_event_id).to eq foo_event.head.id
+      end
+    end
+
+    context 'with scoped event type' do
+      it 'creates correct event instance' do
+        event = subject.create_event('custom_scope.foo', number: 2)
+        expect(event).to be_a EventFactorySpecEvents::ScopedFoo
+        expect(event.body.number).to eq 2
       end
     end
   end
