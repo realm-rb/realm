@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-sns'
+require 'realm/error'
 
 module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway
       # Provides cleaner SDK over Aws::SNS::Topic
       class TopicAdapter
+        class SubscriptionError < Realm::Error
+          def initialize(queue_arn, subscription_attributes)
+            super("Cannot subscribe SQS queue #{queue_arn} with attributes #{subscription_attributes}")
+          end
+        end
+
         def initialize(topic_or_arn)
           @topic = topic_or_arn.is_a?(Aws::SNS::Topic) ? topic_or_arn : Aws::SNS::Resource.new.topic(topic_or_arn)
         end
@@ -20,11 +27,10 @@ module Realm
 
         def subscribe(event_type, queue)
           queue.allow_send_messages(@topic.arn)
-          @topic.subscribe(
-            protocol: 'sqs',
-            endpoint: queue.arn,
-            attributes: subscribe_attributes(event_type),
-          )
+          attributes = subscribe_attributes(event_type)
+          @topic.subscribe(protocol: 'sqs', endpoint: queue.arn, attributes: attributes)
+        rescue Aws::SNS::Errors::InvalidParameter
+          raise SubscriptionError.new(queue.arn, attributes)
         end
 
         private
