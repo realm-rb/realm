@@ -38,12 +38,11 @@ module Realm
         new(runtime: runtime).(event)
       end
 
-      def identifier(value = :undefined)
-        if value == :undefined
-          defined?(@identifier) ? @identifier : name.gsub(/(Domain|(Event)?Handlers?)/, '').underscore.gsub(%r{/+}, '-')
-        else
-          @identifier = value
-        end
+      def identifier(value = :not_provided)
+        @identifier = value unless value == :not_provided
+        return @identifier if defined?(@identifier)
+
+        @identifier = name.gsub(/(Domain|(::)?(Event)?Handlers?)/, '').underscore.gsub(%r{/+}, '-')
       end
 
       def event_types
