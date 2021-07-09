@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'typhoeus'
-require 'elasticsearch'
-require 'realm/health_status'
-require_relative 'repository'
-
 module Realm
   module Elasticsearch
     class Gateway

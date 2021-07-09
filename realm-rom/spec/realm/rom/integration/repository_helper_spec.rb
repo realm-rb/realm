@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/runtime'
-require 'realm/query_handler'
-require 'realm/mixins/repository_helper'
-require 'realm/rom/repository'
-
 module TestMixinsRepositoryHelper
   module Domain
     module Sample

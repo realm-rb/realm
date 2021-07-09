@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/persistence/repository_query_handler_adapter'
-
 RSpec.describe Realm::Persistence::RepositoryQueryHandlerAdapter do
   context 'when repository supports has readonly method' do
     let(:readonly_repo) { double(:readonly_repo, fake_query: :query_return, class: :readonly_repo_class) }

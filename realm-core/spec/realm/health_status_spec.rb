@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/health_status'
-
 RSpec.describe Realm::HealthStatus do
   describe '.[]' do
     it 'creates instance for valid code' do

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/container'
-
 module Realm
   class Context
     include Enumerable

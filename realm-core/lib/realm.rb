@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-Dir[File.join(File.dirname(__FILE__), 'realm', '**', '*.rb')].sort.each do |f|
-  require f
-end
+require 'active_support/all'
 
 module Realm
   class << self

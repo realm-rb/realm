@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/plugin'
-require_relative 'gateway'
-
 module Realm
   module Elasticsearch
     class Plugin < Realm::Plugin

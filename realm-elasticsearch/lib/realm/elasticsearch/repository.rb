@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'yaml'
-require 'active_support/core_ext/string'
 
 module Realm
   module Elasticsearch

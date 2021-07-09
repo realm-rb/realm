@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/persistence'
-require_relative 'read_only_relation_wrapper'
-
 module Realm
   module ROM
     class ReadOnlyRepositoryWrapper

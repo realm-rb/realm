@@ -17,10 +17,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'realm-core'
   spec.add_dependency 'rom', '~> 5.2'
   spec.add_dependency 'rom-sql', '~> 3.2'
+  spec.add_dependency 'zeitwerk', '~> 2.4'
 
   spec.add_development_dependency 'pg'
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'sqlite3'
 end

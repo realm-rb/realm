@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require 'active_support/core_ext/hash'
-require 'active_support/core_ext/string'
 require 'dry-struct'
-require 'realm/types'
 
 module Realm
   class Event < Dry::Struct

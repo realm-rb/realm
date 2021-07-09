@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'ostruct'
-require 'active_support/core_ext/module/remove_method'
-require 'realm'
 
 module TestMixinsControllerService
   module Domain

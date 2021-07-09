@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'rom'
-require 'realm/rom/gateway'
-
 module RomGatewayTest; end
 
 RSpec.describe Realm::ROM::Gateway do
@@ -19,6 +15,7 @@ RSpec.describe Realm::ROM::Gateway do
 
     let(:test_connection) { true }
     let(:pending_migrations) { false }
+    let(:rom_client) { double(:rom_client, configure: nil, gateways: { default: rom_gateway }) }
     let(:rom_gateway) do
       double(
         :rom_gateway,
@@ -28,7 +25,7 @@ RSpec.describe Realm::ROM::Gateway do
     end
 
     before do
-      expect(::ROM).to receive(:container).and_return(double(:rom_client, gateways: { default: rom_gateway }))
+      expect(::ROM).to receive(:container).and_return(rom_client)
     end
 
     context 'with no issues' do

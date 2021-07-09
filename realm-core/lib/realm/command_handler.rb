@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/module/delegation'
-require 'active_support/core_ext/string'
-require 'realm/action_handler'
-require 'realm/mixins/reactive'
-
 module Realm
   class CommandHandler < Realm::ActionHandler
     include Mixins::Reactive

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'elasticsearch'
-require 'realm/elasticsearch/gateway'
-
 module ElasticsearchGatewayTest
   class Review < Realm::Elasticsearch::Repository; end
 end

@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/sns/gateway/queue_manager'
-require 'realm/sns/gateway/queue_adapter'
-
-require 'aws-sdk-core'
-require 'aws-sdk-sns'
-
-Aws.config.update(endpoint: ENV.fetch('AWS_ENDPOINT'))
-
 RSpec.describe Realm::SNS::Gateway::QueueManager do
   let(:sqs) { Aws::SQS::Resource.new }
   let(:queue_names) { sqs.queues.map { |q| q.url.sub(%r{^.*/}, '') } }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative './gateway'
-
 module Realm
   class EventRouter
     class InternalLoopGateway < Gateway

@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/event'
-require 'realm/event_factory'
-
 module EventFactorySpecEvents
   class Foo < Realm::Event
     body_struct do

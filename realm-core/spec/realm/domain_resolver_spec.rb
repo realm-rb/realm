@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/domain_resolver'
-require 'realm/command_handler'
-require 'realm/query_handler'
-require 'realm/event_handler'
-
 module DomainResolverSpec
   module Post
     class Create < Realm::CommandHandler; end

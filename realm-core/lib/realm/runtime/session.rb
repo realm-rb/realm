@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/dispatcher'
-
 module Realm
   class Runtime
     class Session

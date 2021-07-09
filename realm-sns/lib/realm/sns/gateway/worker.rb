@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/hash'
-require 'aws-sdk-sqs'
-
 module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway

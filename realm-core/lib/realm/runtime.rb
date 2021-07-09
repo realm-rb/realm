@@ -1,15 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/module/delegation'
-require 'active_support/core_ext/object/try'
-require 'realm/context'
-require 'realm/container'
-require 'realm/dispatcher'
-require 'realm/event_router'
-require 'realm/multi_worker'
-require 'realm/health_status'
-require 'realm/runtime/session'
-
 module Realm
   class Runtime
     delegate :query, :run, :run_as_job, :wait_for_jobs, to: :dispatcher

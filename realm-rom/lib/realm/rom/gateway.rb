@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'rom'
-require 'realm/health_status'
-require 'active_support/core_ext/string'
-
 module Realm
   module ROM
     class Gateway

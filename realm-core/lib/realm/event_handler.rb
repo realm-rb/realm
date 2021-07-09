@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'realm/persistence'
-require 'realm/mixins/context_injection'
-require 'realm/mixins/reactive'
-require 'realm/mixins/repository_helper'
-require 'realm/mixins/aggregate_member'
-
 module Realm
   class EventHandler
     extend Mixins::ContextInjection::ClassMethods

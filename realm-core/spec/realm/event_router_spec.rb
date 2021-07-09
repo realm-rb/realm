@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/event'
-require 'realm/runtime'
-require 'realm/event_router'
-require 'realm/event_router/internal_loop_gateway'
-
 module EventRouterSpec
   class Ns1SampleHandler < Realm::EventHandler
     namespace :ns1

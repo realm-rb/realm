@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/class'
-require 'active_support/core_ext/string'
-
 module Realm
   class Plugin
     class << self

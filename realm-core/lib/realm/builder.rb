@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'realm/container'
-require 'realm/runtime'
-require 'realm/domain_resolver'
-require 'realm/persistence'
-require 'realm/dispatcher'
-require 'realm/event_router'
-require 'realm/plugin'
-
 module Realm
   class Builder
     def self.setup(config)

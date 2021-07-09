@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require 'active_support/core_ext/string'
-
-require 'realm/event_handler'
-require 'realm/event_router/gateway'
-require_relative './gateway/queue_manager'
-require_relative './gateway/topic_adapter'
-require_relative './gateway/worker'
 
 module Realm
   module SNS

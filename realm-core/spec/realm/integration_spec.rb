@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'ostruct'
-require 'realm'
 
 module TestIntegrationService
   module Domain

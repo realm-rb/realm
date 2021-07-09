@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/container'
-require 'realm/dependency'
-
 RSpec.describe Realm::Container do
   describe '[]' do
     it 'tries to turn object into container unless it already is' do

@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dry-struct', '~> 1.4'
   spec.add_dependency 'dry-types', '~> 1.5'
   spec.add_dependency 'dry-validation', '~> 1.5'
+  spec.add_dependency 'zeitwerk', '~> 2.4'
 
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rspec'

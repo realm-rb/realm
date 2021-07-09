@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'active_support/core_ext/module/delegation'
-require 'realm/action_handler'
-require 'realm/runtime'
-
 class SampleOperation < Realm::ActionHandler
   def handle(params)
     params

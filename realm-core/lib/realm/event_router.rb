@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'active_support/core_ext/hash'
-require 'realm/error'
-require 'realm/domain_resolver'
-require 'realm/event_handler'
-require 'realm/event_factory'
-require 'realm/mixins/dependency_injection'
-require_relative 'event_router/internal_loop_gateway'
-
 module Realm
   class EventRouter
     include Mixins::DependencyInjection

@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/runtime'
-require 'realm/runtime/session'
-require 'realm/domain_resolver'
-require 'realm/dispatcher'
-require 'realm/event_router'
-require 'realm/multi_worker'
-
 RSpec.describe Realm::Runtime::Session do
   let(:container) { Realm::Container[foo: 1] }
   let(:domain_resolver) { instance_double(Realm::DomainResolver, all_event_handlers: []) }

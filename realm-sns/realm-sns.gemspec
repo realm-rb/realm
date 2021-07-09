@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-sns', '~> 1.36'
   spec.add_dependency 'aws-sdk-sqs', '~> 1.34'
   spec.add_dependency 'realm-core'
+  spec.add_dependency 'zeitwerk', '~> 2.4'
 
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rspec'
