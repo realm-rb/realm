@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 module EventFactorySpecEvents
+  KeyType = Realm::Types::String
+  MyStruct = Dry.Struct(text: Realm::Types::String)
+
   class Foo < Realm::Event
     body_struct do
-      attribute :number, T::Strict::Integer
+      attribute :number, T::Integer
     end
   end
 
   class BarEvent < Realm::Event
     body_struct do
-      attribute :text, T::Strict::String
+      attributes_from MyStruct
+      attribute? :key, KeyType
     end
   end
 
@@ -24,7 +28,7 @@ RSpec.describe Realm::EventFactory do
   describe '#create_event' do
     subject { described_class.new(EventFactorySpecEvents) }
     let(:foo_event) { subject.create_event(:foo, number: 1) }
-    let(:bar_event) { subject.create_event(:bar, text: 'hi') }
+    let(:bar_event) { subject.create_event(:bar, key: 'K12', text: 'hi') }
 
     it 'instantiates event' do
       expect(foo_event).to be_a EventFactorySpecEvents::Foo
@@ -32,6 +36,7 @@ RSpec.describe Realm::EventFactory do
 
       expect(bar_event).to be_a EventFactorySpecEvents::BarEvent
       expect(bar_event.body.text).to eq 'hi'
+      expect(bar_event.body.key).to eq 'K12'
     end
 
     context 'with correlate option' do
