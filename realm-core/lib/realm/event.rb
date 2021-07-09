@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'securerandom'
+require 'dry/core/constants'
 require 'dry-struct'
 
 module Realm
@@ -37,8 +38,8 @@ module Realm
 
       protected
 
-      def body_struct(&block)
-        attribute(:body, &block)
+      def body_struct(type = Dry::Core::Constants::Undefined, &block)
+        attribute(:body, type, &block)
       end
     end
 
