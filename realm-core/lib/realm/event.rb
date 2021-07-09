@@ -32,7 +32,8 @@ module Realm
         super({ head: head }.merge(body.empty? ? {} : { body: body }))
       end
 
-      def type
+      def type(value = :not_provided)
+        @type = value unless value == :not_provided
         @type ||= name.demodulize.sub('Event', '').underscore
       end
 

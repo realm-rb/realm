@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+
 module EventFactorySpecEvents
   KeyType = Realm::Types::String
   MyStruct = Dry.Struct(text: Realm::Types::String)
@@ -14,6 +16,15 @@ module EventFactorySpecEvents
     body_struct do
       attributes_from MyStruct
       attribute? :key, KeyType
+    end
+
+    class V2 < Realm::Event
+      type 'bar.v2'
+
+      body_struct do
+        attributes_from BarEvent::Body
+        attribute :foo, T::Integer
+      end
     end
   end
 
@@ -56,11 +67,20 @@ RSpec.describe Realm::EventFactory do
       end
     end
 
-    context 'with scoped event type' do
+    context 'with customized event type' do
       it 'creates correct event instance' do
         event = subject.create_event('custom_scope.foo', number: 2)
         expect(event).to be_a EventFactorySpecEvents::ScopedFoo
         expect(event.body.number).to eq 2
+      end
+    end
+
+    context 'with nested event type' do
+      it 'creates correct event instance' do
+        event = subject.create_event('bar.v2', text: 'hi', foo: 2)
+        expect(event).to be_a EventFactorySpecEvents::BarEvent::V2
+        expect(event.body.text).to eq 'hi'
+        expect(event.body.foo).to eq 2
       end
     end
   end
