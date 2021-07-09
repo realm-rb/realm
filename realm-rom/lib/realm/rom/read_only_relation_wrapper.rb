@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'rom-sql'
-require 'realm/persistence'
-
 module Realm
   module ROM
     class ReadOnlyRelationWrapper

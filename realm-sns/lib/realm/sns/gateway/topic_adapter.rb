@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-sns'
-require 'realm/error'
-
 module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway

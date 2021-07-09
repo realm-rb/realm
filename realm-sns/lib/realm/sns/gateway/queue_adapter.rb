@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/event_router/gateway'
-require 'realm/mixins/decorator'
-
 module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway

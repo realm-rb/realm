@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/dependency'
-
 module Realm
   module Mixins
     module DependencyInjection

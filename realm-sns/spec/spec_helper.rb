@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'realm-sns'
+require 'aws-sdk-core'
+
+Aws.config.update(endpoint: ENV.fetch('AWS_ENDPOINT'))
+
 module SpecHelpers
   def wait_for(timeout = 30, increment = 0.2)
     Timeout.timeout(timeout) do

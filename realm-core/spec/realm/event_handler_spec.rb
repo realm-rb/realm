@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/runtime'
-require 'realm/container'
-require 'realm/event'
-require 'realm/event_handler'
-require 'realm/domain_resolver'
-
 module FooEvents
   class Foo < Realm::Event; end
   class Bar < Realm::Event; end

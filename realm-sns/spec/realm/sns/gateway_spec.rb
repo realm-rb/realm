@@ -1,17 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/sns/gateway'
-require 'realm/event_handler'
-require 'realm/event_factory'
-require 'realm/event'
-require 'realm/runtime'
-
-require 'aws-sdk-core'
-require 'aws-sdk-sns'
-
-Aws.config.update(endpoint: ENV.fetch('AWS_ENDPOINT'))
-
 module SNSGatewaySpec
   class SomethingHappenedEvent < Realm::Event
     body_struct do

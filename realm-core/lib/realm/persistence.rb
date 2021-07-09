@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'realm/error'
-
 module Realm
   class Persistence
     class InvalidPersistanceType < Realm::Error; end

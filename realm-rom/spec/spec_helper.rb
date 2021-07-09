@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'realm-rom'
+
 module SpecHelpers
   def wait_for(timeout = 30, increment = 0.2)
     Timeout.timeout(timeout) do

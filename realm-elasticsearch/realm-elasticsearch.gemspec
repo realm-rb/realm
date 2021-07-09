@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'elasticsearch', '~> 7.11'
   spec.add_dependency 'realm-core'
   spec.add_dependency 'typhoeus', '~> 1.4'
+  spec.add_dependency 'zeitwerk', '~> 2.4'
 
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rspec'

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm-core'
-require 'realm-rom'
 require 'pg'
 
 %w[app lib].each do |dir|

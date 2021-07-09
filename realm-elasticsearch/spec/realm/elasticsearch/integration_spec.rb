@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm-core'
-require 'realm-elasticsearch'
-require 'elasticsearch'
-
 module TestIntegrationService
   module Repositories
     class Review < Realm::Elasticsearch::Repository; end

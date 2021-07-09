@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
 require 'rom-repository'
-require 'rom-sql'
-require 'realm/persistence'
-require_relative 'read_only_repository_wrapper'
 
 module Realm
   module ROM

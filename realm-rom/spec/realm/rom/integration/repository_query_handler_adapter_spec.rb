@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/rom/repository'
-require 'realm/persistence/repository_query_handler_adapter'
-
 module RepositoryQueryHandlerAdapterSpec
   class Users < ROM::Relation[:sql]
     schema(:users, infer: true)

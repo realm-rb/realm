@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'realm'
 
 RSpec.describe Realm::Runtime do
   let(:container) { Realm::Container[foo: 1] }

@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'realm/query_handler'
-require 'realm/command_handler'
-require 'realm/domain_resolver'
-require 'realm/error'
-require 'realm/mixins/dependency_injection'
-require 'realm/persistence/repository_query_handler_adapter'
-
 module Realm
   class Dispatcher
     include Mixins::DependencyInjection

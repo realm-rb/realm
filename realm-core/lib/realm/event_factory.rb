@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/error'
-require 'realm/event'
-
 module Realm
   class EventFactory
     def initialize(events_module)

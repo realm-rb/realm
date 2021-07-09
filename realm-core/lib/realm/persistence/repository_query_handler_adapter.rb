@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/persistence'
-require 'realm/error'
-
 module Realm
   class Persistence
     class QueryCannotModifyState < Realm::Error; end

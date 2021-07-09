@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require 'dry-container'
-require 'active_support/core_ext/string'
-require 'active_support/core_ext/object/try'
-require 'realm/error'
 
 module Realm
   class Container

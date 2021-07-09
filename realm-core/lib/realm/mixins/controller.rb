@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/module/introspection'
-require 'active_support/core_ext/class/attribute'
-
 module Realm
   module Mixins
     module Controller

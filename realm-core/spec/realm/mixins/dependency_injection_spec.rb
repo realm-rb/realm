@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/container'
-require 'realm/mixins/dependency_injection'
-
 module DependencyInjectionSpec
   class WithDI
     include Realm::Mixins::DependencyInjection

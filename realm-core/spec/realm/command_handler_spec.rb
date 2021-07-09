@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/command_handler'
-require 'realm/runtime'
-
 module CommandHandlerSpec
   class TestCommandHandler < Realm::CommandHandler
     def handle(param1:)

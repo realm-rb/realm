@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-sqs'
-require 'realm/error'
-require_relative './queue_adapter'
-
 module Realm
   module SNS
     class Gateway < Realm::EventRouter::Gateway

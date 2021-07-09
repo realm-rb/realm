@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm/container'
-require 'realm/dispatcher'
-require 'realm/domain_resolver'
-require 'realm/query_handler'
-require 'realm/command_handler'
-require 'realm/error'
-
 RSpec.describe Realm::Dispatcher do
   let(:domain_resolver) { instance_double(Realm::DomainResolver) }
   let(:handler) { ->(**args) { args } }

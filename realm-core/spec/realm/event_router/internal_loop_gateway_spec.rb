@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-require 'realm/event_router/internal_loop_gateway'
-require 'realm/event_handler'
-require 'realm/event_factory'
-require 'realm/event'
-require 'realm/runtime'
-
 module InternalLoopGatewaySpec
   class SomethingHappenedEvent < Realm::Event
     body_struct do

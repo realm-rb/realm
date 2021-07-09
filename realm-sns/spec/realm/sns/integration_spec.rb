@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-require 'realm-core'
-require 'realm-sns'
-require 'aws-sdk-core'
-require 'aws-sdk-sns'
-require 'aws-sdk-sqs'
-
-Aws.config.update(endpoint: ENV.fetch('AWS_ENDPOINT'))
-
 module TestIntegrationService
   module Domain
     module Submission

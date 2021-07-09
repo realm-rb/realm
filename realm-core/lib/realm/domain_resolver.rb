@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/string'
-require 'realm/command_handler'
-require 'realm/query_handler'
-require 'realm/event_handler'
-require 'realm/event'
-
 module Realm
   class DomainResolver
     DOMAIN_CLASS_TYPES = [CommandHandler, QueryHandler, EventHandler].freeze
@@ -21,7 +15,7 @@ module Realm
       handlers = @index[type]
       return [handlers[identifier], :handle] if handlers.key?(identifier)
 
-      # The last part of the identifier can action method name inside the handler
+      # The last part of the identifier can be action method name inside the handler
       parts = identifier.split('.')
       handler_part = parts[..-2].join('.')
       action = parts[-1]
