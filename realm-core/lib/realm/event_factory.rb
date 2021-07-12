@@ -28,11 +28,10 @@ module Realm
       root_module_str = root_module.to_s
       root_module.constants.each_with_object({}) do |const_sym, all|
         const = root_module.const_get(const_sym)
-        if !(const < Event) && const.to_s.start_with?(root_module_str)
-          all.merge!(collect_event_classes(const))
-        elsif const < Event
-          all[const.type] = const
-        end
+        next unless const.is_a?(Module) && const.to_s.start_with?(root_module_str)
+
+        all[const.type] = const if const < Event
+        all.merge!(collect_event_classes(const))
       end
     end
 

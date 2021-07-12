@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'securerandom'
+require 'dry/core/constants'
 require 'dry-struct'
 
 module Realm
@@ -31,14 +32,15 @@ module Realm
         super({ head: head }.merge(body.empty? ? {} : { body: body }))
       end
 
-      def type
+      def type(value = :not_provided)
+        @type = value unless value == :not_provided
         @type ||= name.demodulize.sub('Event', '').underscore
       end
 
       protected
 
-      def body_struct(&block)
-        attribute(:body, &block)
+      def body_struct(type = Dry::Core::Constants::Undefined, &block)
+        attribute(:body, type, &block)
       end
     end
 
