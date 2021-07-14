@@ -6,7 +6,7 @@ require 'dry-schema'
 module Realm
   class Struct < Dry::Struct
     class << self
-      def to_dry_schema(type: :schema)
+      def to_dry_schema(type: :schema) # rubocop:disable Metrics/AbcSize
         keys = schema.type.keys
 
         Dry::Schema.send(schema_type_to_method(type)) do
@@ -32,7 +32,7 @@ module Realm
       private
 
       def schema_type_to_method(type)
-        case(type)
+        case type
         when :schema
           :define
         when :params
@@ -40,7 +40,7 @@ module Realm
         when :json
           :JSON
         else
-          fail "Not supported schema type #{type}"
+          raise "Not supported schema type #{type}"
         end
       end
     end

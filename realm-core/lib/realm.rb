@@ -19,7 +19,7 @@ module Realm
     end
 
     # port the construction method from Dry::Struct as it's not inherited
-    def Struct(attributes = Dry::Core::Constants::EMPTY_HASH, &block)
+    def Struct(attributes = Dry::Core::Constants::EMPTY_HASH, &block) # rubocop:disable Naming/MethodName
       Class.new(Struct) do
         attributes.each { |a, type| attribute a, type }
         module_eval(&block) if block
