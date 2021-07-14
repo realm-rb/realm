@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+
 class SampleOperation < Realm::ActionHandler
   def handle(params)
     params
@@ -51,12 +53,26 @@ class OperationWithContract < Realm::ActionHandler
     params
   end
 
-  contract_json do
+  contract_schema do
     required(:param1).filled(:integer)
   end
 
   def another(params)
     [:another, params]
+  end
+end
+
+MyStruct = Dry.Struct(
+  param2: Realm::Types::String,
+  foo?: Dry.Struct(param3: Realm::Types::Integer),
+  bar?: Realm::Types::Array.of(Realm::Types::Integer),
+  zoo?: Realm::Types::Array.of(Dry.Struct(param4: Realm::Types::Integer)),
+)
+
+class OperationWithStructContract < Realm::ActionHandler
+  contract_schema MyStruct
+  def handle(params)
+    params
   end
 end
 
@@ -94,15 +110,45 @@ RSpec.describe Realm::ActionHandler do
 
   describe '.contract' do
     it 'raises InvalidParams error if contract not fulfilled' do
-      expect { OperationWithContract.() }.to raise_error(Realm::InvalidParams, /is missing/)
+      expect { OperationWithContract.() }.to raise_error(Realm::InvalidParams, /param1.+(is missing)/)
       expect { OperationWithContract.(params: { param1: '' }) }.to raise_error(
-        Realm::InvalidParams, /must be filled/
+        Realm::InvalidParams, /param1.+(must be filled)/
       )
       expect { OperationWithContract.(params: { param1: 7 }) }.to raise_error(
-        Realm::InvalidParams, /must be a string/
+        Realm::InvalidParams, /param1.+(must be a string)/
       )
+    end
+  end
+
+  describe '.contract_schema' do
+    it 'raises InvalidParams error if contract not fulfilled' do
       expect { OperationWithContract.(action: :another, params: { param1: 'text' }) }.to raise_error(
-        Realm::InvalidParams, /must be an integer/
+        Realm::InvalidParams, /param1.+(must be an integer)/
+      )
+    end
+
+    it 'supports structs convertible to schemas' do
+      expect(OperationWithStructContract.(params: { param2: 'foo' })).to eq(param2: 'foo')
+      expect(OperationWithStructContract.(params: { param2: 'foo', foo: { param3: 3 } })).to eq(
+        param2: 'foo', foo: { param3: 3 },
+      )
+      expect(OperationWithStructContract.(params: { param2: 'foo', bar: [1, 2] })).to eq(
+        param2: 'foo', bar: [1, 2],
+      )
+      expect(OperationWithStructContract.(params: { param2: 'foo', zoo: [{ param4: 4 }] })).to eq(
+        param2: 'foo', zoo: [{ param4: 4 }],
+      )
+      expect { OperationWithStructContract.(params: { param1: 'foo' }) }.to raise_error(
+        Realm::InvalidParams, /param2.+(is missing)/
+      )
+      expect { OperationWithStructContract.(params: { param2: '' }) }.to raise_error(
+        Realm::InvalidParams, /param2.+(must be filled)/
+      )
+      expect { OperationWithStructContract.(params: { param2: 1 }) }.to raise_error(
+        Realm::InvalidParams, /param2.+(must be a string)/
+      )
+      expect { OperationWithStructContract.(params: { param2: nil }) }.to raise_error(
+        Realm::InvalidParams, /param2.+(must be a string)/
       )
     end
   end
