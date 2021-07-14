@@ -38,18 +38,18 @@ module Realm
         @method_contract = Class.new(Dry::Validation::Contract, &block).new
       end
 
-      def contract_schema(*imports, &block)
-        imported_schemas = sanitize_schemas(imports)
+      def contract_schema(*imports, **attributes, &block)
+        imported_schemas = sanitize_schemas(imports, attributes)
         contract { schema(*imported_schemas, &block) }
       end
 
-      def contract_params(*imports, &block)
-        imported_schemas = sanitize_schemas(imports, :params)
+      def contract_params(*imports, **attributes, &block)
+        imported_schemas = sanitize_schemas(imports, attributes, :params)
         contract { params(*imported_schemas, &block) }
       end
 
-      def contract_json(*imports, &block)
-        imported_schemas = sanitize_schemas(imports, :json)
+      def contract_json(*imports, **attributes, &block)
+        imported_schemas = sanitize_schemas(imports, attributes, :json)
         contract { json(*imported_schemas, &block) }
       end
 
@@ -64,7 +64,8 @@ module Realm
 
       private
 
-      def sanitize_schemas(things, type = :schema)
+      def sanitize_schemas(things, attributes, type = :schema)
+        things << Realm.Struct(attributes) if attributes.present?
         things.map { |thing| convert_to_schema(thing, type) }
       end
 

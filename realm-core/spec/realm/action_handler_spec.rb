@@ -76,6 +76,13 @@ class OperationWithStructContract < Realm::ActionHandler
   end
 end
 
+class OperationWithAttributesContract < Realm::ActionHandler
+  contract_schema foo: Realm::Types::Integer
+  def handle(params)
+    params
+  end
+end
+
 RSpec.describe Realm::ActionHandler do
   describe '.call' do
     it "calls handle method by default and returns it's result" do
@@ -150,6 +157,10 @@ RSpec.describe Realm::ActionHandler do
       expect { OperationWithStructContract.(params: { param2: nil }) }.to raise_error(
         Realm::InvalidParams, /param2.+(must be a string)/
       )
+    end
+
+    it 'supports schema attributes' do
+      expect(OperationWithAttributesContract.(params: { foo: 12 })).to eq(foo: 12)
     end
   end
 end
