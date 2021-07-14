@@ -43,12 +43,12 @@ module Realm
       end
 
       def contract_params(*imports, &block)
-        imported_schemas = sanitize_schemas(imports, :Params)
+        imported_schemas = sanitize_schemas(imports, :params)
         contract { params(*imported_schemas, &block) }
       end
 
       def contract_json(*imports, &block)
-        imported_schemas = sanitize_schemas(imports, :JSON)
+        imported_schemas = sanitize_schemas(imports, :json)
         contract { json(*imported_schemas, &block) }
       end
 
@@ -63,33 +63,16 @@ module Realm
 
       private
 
-      def sanitize_schemas(things, method_name = :define)
-        things.map { |thing| convert_to_schema(thing, method_name) }
+      def sanitize_schemas(things, type = :schema)
+        things.map { |thing| convert_to_schema(thing, type) }
       end
 
-      def convert_to_schema(thing, method_name)
-        return thing if thing.is_a? Dry::Schema::Processor
+      def convert_to_schema(thing, type)
+        return thing if thing.is_a? Dry::Schema::Processor # already a schema
 
-        raise NotConvertibleToSchema, thing unless thing.respond_to?(:schema)
+        raise NotConvertibleToSchema, thing unless thing.respond_to?(:to_dry_schema)
 
-        # lambda to be accessible within Dry::Schema context
-        convert = ->(t) { t.respond_to?(:schema) ? convert_to_schema(t, method_name) : t }
-
-        Dry::Schema.send(method_name) do
-          thing.schema.type.keys.each do |key|
-            param = key.required? ? required(key.name) : optional(key.name)
-
-            if key.type.constructor_type == Dry::Types::Array::Constructor # array type
-              param.array(convert.(key.type.member))
-            elsif key.respond_to?(:schema) # struct
-              param.hash(convert.(key))
-            elsif key.required?
-              param.filled(key.type)
-            else
-              param.maybe(key.type)
-            end
-          end
-        end
+        thing.to_dry_schema(type: type)
       end
     end
 

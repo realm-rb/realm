@@ -62,11 +62,11 @@ class OperationWithContract < Realm::ActionHandler
   end
 end
 
-MyStruct = Dry.Struct(
+MyStruct = Realm.Struct(
   param2: Realm::Types::String,
-  foo?: Dry.Struct(param3: Realm::Types::Integer),
+  foo?: Realm.Struct(param3: Realm::Types::Integer),
   bar?: Realm::Types::Array.of(Realm::Types::Integer),
-  zoo?: Realm::Types::Array.of(Dry.Struct(param4: Realm::Types::Integer)),
+  zoo?: Realm::Types::Array.of(Realm.Struct(param4: Realm::Types::Integer)),
 )
 
 class OperationWithStructContract < Realm::ActionHandler
