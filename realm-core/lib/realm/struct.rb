@@ -25,6 +25,10 @@ module Realm
         end
       end
 
+      def merge(attributes)
+        clone.attributes(attributes)
+      end
+
       private
 
       def schema_type_to_method(type)

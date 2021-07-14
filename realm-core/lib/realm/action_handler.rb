@@ -33,6 +33,7 @@ module Realm
         # TODO: implement
       end
 
+      # TODO: support struct schemas for generic contract as well
       def contract(&block)
         @method_contract = Class.new(Dry::Validation::Contract, &block).new
       end
