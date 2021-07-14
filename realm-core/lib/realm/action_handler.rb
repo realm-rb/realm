@@ -77,23 +77,16 @@ module Realm
 
         Dry::Schema.send(method_name) do
           thing.schema.type.keys.each do |key|
+            param = key.required? ? required(key.name) : optional(key.name)
 
-            if key.required?
-              if key.type.constructor_type == Dry::Types::Array::Constructor # array type
-                required(key.name).array(convert.(key.type.member))
-              elsif key.respond_to?(:schema) # struct
-                required(key.name).hash(convert.(key))
-              else
-                required(key.name).filled(key.type)
-              end
+            if key.type.constructor_type == Dry::Types::Array::Constructor # array type
+              param.array(convert.(key.type.member))
+            elsif key.respond_to?(:schema) # struct
+              param.hash(convert.(key))
+            elsif key.required?
+              param.filled(key.type)
             else
-              if key.type.constructor_type == Dry::Types::Array::Constructor # array type
-                optional(key.name).array(convert.(key.type.member))
-              elsif key.respond_to?(:schema) # struct
-                optional(key.name).hash(convert.(key))
-              else
-                optional(key.name).maybe(key.type)
-              end
+              param.maybe(key.type)
             end
           end
         end
