@@ -22,13 +22,13 @@ module Realm
       end
 
       def find(id:)
-        single(client.get(index: index_name, id: id))
+        format_single(client.get(index: index_name, id: id))
       rescue ::Elasticsearch::Transport::Transport::Errors::NotFound
         nil
       end
 
       def all
-        multiple(raw_search(query: { match_all: {} }))
+        format_multiple(raw_search(query: { match_all: {} }))
       end
 
       def create(id: nil, **attrs)
@@ -53,7 +53,7 @@ module Realm
       end
 
       def search_by(params)
-        multiple(raw_search(query: { bool: { must: match_params(params) } }))
+        format_multiple(raw_search(query: { bool: { must: match_params(params) } }))
       end
 
       def delete_by(params)
@@ -85,6 +85,17 @@ module Realm
         )
       end
 
+      protected
+
+      def format_single(result)
+        result['_source'].merge(id: result['_id']).deep_symbolize_keys
+      end
+
+      def format_multiple(results)
+        docs = results.dig('hits', 'hits').map { |doc| format_single(doc) }
+        { docs: docs }
+      end
+
       private
 
       attr_reader :client
@@ -93,16 +104,6 @@ module Realm
         # impacts performance so should be used only in TEST env
         # TODO: remove dependency on Rails
         defined?(::Rails) && ::Rails.env.test?
-      end
-
-      def single(result)
-        id = result['_id'].then { |i| i.to_i.positive? ? i.to_i : i }
-        result['_source'].merge(id: id).deep_symbolize_keys
-      end
-
-      def multiple(results)
-        docs = results.dig('hits', 'hits').map { |doc| single(doc) }
-        { docs: docs }
       end
 
       def match_params(params)
