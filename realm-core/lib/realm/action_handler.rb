@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 require 'dry-validation'
-require 'active_support/core_ext/module/delegation'
-require 'realm/error'
-require 'realm/mixins/context_injection'
-require 'realm/mixins/repository_helper'
-require 'realm/mixins/aggregate_member'
-require_relative 'action_handler/result'
 
 module Realm
   class ActionHandler
