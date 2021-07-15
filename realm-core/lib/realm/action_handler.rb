@@ -8,12 +8,6 @@ module Realm
     include Mixins::AggregateMember
     include Mixins::RepositoryHelper
 
-    class NotConvertibleToSchema < Realm::Error
-      def initialize(thing)
-        super("Not convertible to schema: #{thing}")
-      end
-    end
-
     class << self
       attr_reader :contracts
 
@@ -27,24 +21,20 @@ module Realm
         # TODO: implement
       end
 
-      # TODO: support struct schemas for generic contract as well
       def contract(&block)
-        @method_contract = Class.new(Dry::Validation::Contract, &block).new
+        @method_contract = Class.new(Realm::Contract, &block).new
       end
 
-      def contract_schema(*imports, **attributes, &block)
-        imported_schemas = sanitize_schemas(imports, attributes)
-        contract { schema(*imported_schemas, &block) }
+      def contract_schema(...)
+        contract { schema(...) }
       end
 
-      def contract_params(*imports, **attributes, &block)
-        imported_schemas = sanitize_schemas(imports, attributes, :params)
-        contract { params(*imported_schemas, &block) }
+      def contract_params(...)
+        contract { params(...) }
       end
 
-      def contract_json(*imports, **attributes, &block)
-        imported_schemas = sanitize_schemas(imports, attributes, :json)
-        contract { json(*imported_schemas, &block) }
+      def contract_json(...)
+        contract { json(...) }
       end
 
       def method_added(method_name)
@@ -54,21 +44,6 @@ module Realm
         @contracts ||= {}
         @contracts[method_name] = @method_contract
         remove_instance_variable(:@method_contract)
-      end
-
-      private
-
-      def sanitize_schemas(things, attributes, type = :schema)
-        things << Realm.Struct(attributes) if attributes.present?
-        things.map { |thing| convert_to_schema(thing, type) }
-      end
-
-      def convert_to_schema(thing, type)
-        return thing if thing.is_a? Dry::Schema::Processor # already a schema
-
-        raise NotConvertibleToSchema, thing unless thing.respond_to?(:to_dry_schema)
-
-        thing.to_dry_schema(type: type)
       end
     end
 
