@@ -51,12 +51,31 @@ class OperationWithContract < Realm::ActionHandler
     params
   end
 
-  contract_json do
+  schema_contract do
     required(:param1).filled(:integer)
   end
 
   def another(params)
     [:another, params]
+  end
+end
+
+MyStruct = Realm.Struct(
+  param2: Realm::Types::String,
+  zoo: Realm::Types::Array.of(Realm.Struct(param4: Realm::Types::Integer)),
+)
+
+class OperationWithStructContract < Realm::ActionHandler
+  contract_schema MyStruct
+  def handle(params)
+    params
+  end
+end
+
+class OperationWithAttributesContract < Realm::ActionHandler
+  contract_schema foo: Realm::Types::Integer
+  def handle(params)
+    params
   end
 end
 
@@ -94,16 +113,31 @@ RSpec.describe Realm::ActionHandler do
 
   describe '.contract' do
     it 'raises InvalidParams error if contract not fulfilled' do
-      expect { OperationWithContract.() }.to raise_error(Realm::InvalidParams, /is missing/)
+      expect { OperationWithContract.() }.to raise_error(Realm::InvalidParams, /param1.+(is missing)/)
       expect { OperationWithContract.(params: { param1: '' }) }.to raise_error(
-        Realm::InvalidParams, /must be filled/
+        Realm::InvalidParams, /param1.+(must be filled)/
       )
       expect { OperationWithContract.(params: { param1: 7 }) }.to raise_error(
-        Realm::InvalidParams, /must be a string/
+        Realm::InvalidParams, /param1.+(must be a string)/
       )
+    end
+  end
+
+  describe '.contract_schema' do
+    it 'raises InvalidParams error if contract not fulfilled' do
       expect { OperationWithContract.(action: :another, params: { param1: 'text' }) }.to raise_error(
-        Realm::InvalidParams, /must be an integer/
+        Realm::InvalidParams, /param1.+(must be an integer)/
       )
+    end
+
+    it 'supports structs convertible to schemas' do
+      expect(OperationWithStructContract.(params: { param2: 'foo', zoo: [{ param4: 4 }] })).to eq(
+        param2: 'foo', zoo: [{ param4: 4 }],
+      )
+    end
+
+    it 'supports schema attributes' do
+      expect(OperationWithAttributesContract.(params: { foo: 12 })).to eq(foo: 12)
     end
   end
 end

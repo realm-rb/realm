@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 require 'dry-validation'
-require 'active_support/core_ext/module/delegation'
-require 'realm/error'
-require 'realm/mixins/context_injection'
-require 'realm/mixins/repository_helper'
-require 'realm/mixins/aggregate_member'
-require_relative 'action_handler/result'
 
 module Realm
   class ActionHandler
@@ -28,20 +22,24 @@ module Realm
       end
 
       def contract(&block)
-        @method_contract = Class.new(Dry::Validation::Contract, &block).new
+        @method_contract = Class.new(Realm::Contract, &block).new
       end
 
-      def contract_schema(&block)
-        contract { schema(&block) }
+      def contract_schema(...)
+        contract { schema(...) }
       end
 
-      def contract_params(&block)
-        contract { params(&block) }
+      def contract_params(...)
+        contract { params(...) }
       end
 
-      def contract_json(&block)
-        contract { json(&block) }
+      def contract_json(...)
+        contract { json(...) }
       end
+
+      alias schema_contract contract_schema
+      alias params_contract contract_params
+      alias json_contract contract_json
 
       def method_added(method_name)
         super
