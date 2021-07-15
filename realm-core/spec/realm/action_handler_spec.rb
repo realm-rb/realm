@@ -51,7 +51,7 @@ class OperationWithContract < Realm::ActionHandler
     params
   end
 
-  contract_schema do
+  schema_contract do
     required(:param1).filled(:integer)
   end
 

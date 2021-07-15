@@ -37,6 +37,10 @@ module Realm
         contract { json(...) }
       end
 
+      alias schema_contract contract_schema
+      alias params_contract contract_params
+      alias json_contract contract_json
+
       def method_added(method_name)
         super
         return unless defined?(@method_contract)
