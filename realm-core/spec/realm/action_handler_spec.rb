@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry-struct'
-
 class SampleOperation < Realm::ActionHandler
   def handle(params)
     params
@@ -64,9 +62,7 @@ end
 
 MyStruct = Realm.Struct(
   param2: Realm::Types::String,
-  foo?: Realm.Struct(param3: Realm::Types::Integer),
-  bar?: Realm::Types::Array.of(Realm::Types::Integer),
-  zoo?: Realm::Types::Array.of(Realm.Struct(param4: Realm::Types::Integer)),
+  zoo: Realm::Types::Array.of(Realm.Struct(param4: Realm::Types::Integer)),
 )
 
 class OperationWithStructContract < Realm::ActionHandler
@@ -135,27 +131,8 @@ RSpec.describe Realm::ActionHandler do
     end
 
     it 'supports structs convertible to schemas' do
-      expect(OperationWithStructContract.(params: { param2: 'foo' })).to eq(param2: 'foo')
-      expect(OperationWithStructContract.(params: { param2: 'foo', foo: { param3: 3 } })).to eq(
-        param2: 'foo', foo: { param3: 3 },
-      )
-      expect(OperationWithStructContract.(params: { param2: 'foo', bar: [1, 2] })).to eq(
-        param2: 'foo', bar: [1, 2],
-      )
       expect(OperationWithStructContract.(params: { param2: 'foo', zoo: [{ param4: 4 }] })).to eq(
         param2: 'foo', zoo: [{ param4: 4 }],
-      )
-      expect { OperationWithStructContract.(params: { param1: 'foo' }) }.to raise_error(
-        Realm::InvalidParams, /param2.+(is missing)/
-      )
-      expect { OperationWithStructContract.(params: { param2: '' }) }.to raise_error(
-        Realm::InvalidParams, /param2.+(must be filled)/
-      )
-      expect { OperationWithStructContract.(params: { param2: 1 }) }.to raise_error(
-        Realm::InvalidParams, /param2.+(must be a string)/
-      )
-      expect { OperationWithStructContract.(params: { param2: nil }) }.to raise_error(
-        Realm::InvalidParams, /param2.+(must be a string)/
       )
     end
 
