@@ -37,4 +37,22 @@ RSpec.describe Realm::Contract do
     expect(attributes_contract.({})).to be_a(Dry::Validation::Result)
     expect(attributes_contract.(foo: 1).to_h).to eq(foo: 1)
   end
+
+  describe '.schema' do
+    it 'generates contract schema with Dry::Schema::Processor' do
+      expect(StandardContract.schema).to be_a(Dry::Schema::Processor)
+    end
+  end
+
+  describe '.params' do
+    it 'generates contract schema with Dry::Schema::Params' do
+      expect(StructContract.schema).to be_a(Dry::Schema::Params)
+    end
+  end
+
+  describe '.json' do
+    it 'generates contract schema with Dry::Schema::JSON' do
+      expect(AttributesContract.schema).to be_a(Dry::Schema::JSON)
+    end
+  end
 end

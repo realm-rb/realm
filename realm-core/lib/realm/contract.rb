@@ -12,20 +12,20 @@ module Realm
 
     class << self
       def schema(*external_schemas, **attributes, &block)
-        super(*sanitize_schemas(external_schemas, attributes), &block)
+        super(*sanitize_schemas(external_schemas, attributes, :schema), &block)
       end
 
       def params(*external_schemas, **attributes, &block)
-        super(*sanitize_schemas(external_schemas, attributes), &block)
+        super(*sanitize_schemas(external_schemas, attributes, :params), &block)
       end
 
       def json(*external_schemas, **attributes, &block)
-        super(*sanitize_schemas(external_schemas, attributes), &block)
+        super(*sanitize_schemas(external_schemas, attributes, :json), &block)
       end
 
       private
 
-      def sanitize_schemas(things, attributes, type = :schema)
+      def sanitize_schemas(things, attributes, type)
         things << Realm.Struct(attributes) if attributes.present?
         things.map { |thing| convert_to_schema(thing, type) }
       end
