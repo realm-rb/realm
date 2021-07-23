@@ -37,10 +37,28 @@ module Realm
         @type ||= name.demodulize.sub('Event', '').underscore
       end
 
+      def attributes_with_meta
+        @attributes_with_meta ||= collect_attributes_with_meta(self::Body)
+      end
+
       protected
 
       def body_struct(type = Dry::Core::Constants::Undefined, &block)
         attribute(:body, type, &block)
+      end
+
+      private
+
+      def collect_attributes_with_meta(thing, path = [])
+        if thing.respond_to?(:schema) # struct
+          thing.schema.keys.reduce({}) do |memo, key|
+            memo.merge(collect_attributes_with_meta(key.type, path + [key.name]))
+          end
+        elsif thing.constructor_type == Dry::Types::Array::Constructor # array
+          collect_attributes_with_meta(thing.type.member, path + [:[]])
+        else
+          thing.meta.present? ? { path => thing.meta } : {}
+        end
       end
     end
 
