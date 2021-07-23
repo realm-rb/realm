@@ -83,7 +83,7 @@ module Realm
         end
 
         def message_to_event(msg)
-          event_type = msg.message_attributes['event_type'].string_value
+          event_type = msg.message_attributes['event_type']&.string_value
           raise 'Message is missing event type' unless event_type
 
           payload = JSON.parse(msg.body).deep_symbolize_keys
