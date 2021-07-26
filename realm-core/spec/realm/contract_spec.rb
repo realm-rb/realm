@@ -19,6 +19,12 @@ class AttributesContract < Realm::Contract
   json foo: Realm::Types::Integer
 end
 
+class CombinedContract < Realm::Contract
+  schema MyStruct, another: Realm::Types::Integer do
+    required(:foo).filled(type?: String, min_size?: 3)
+  end
+end
+
 RSpec.describe Realm::Contract do
   it 'supports standard dry-validation use-case' do
     standard_contract = StandardContract.new
@@ -36,6 +42,13 @@ RSpec.describe Realm::Contract do
     attributes_contract = AttributesContract.new
     expect(attributes_contract.({})).to be_a(Dry::Validation::Result)
     expect(attributes_contract.(foo: 1).to_h).to eq(foo: 1)
+  end
+
+  it 'supports combination of struct, attributes and standard schema' do
+    contract = CombinedContract.new
+    expect(contract.(foo: 'ab', another: 'c').errors.to_h).to eq(
+      foo: ['size cannot be less than 3'], bar: ['is missing'], another: ['must be an integer'],
+    )
   end
 
   describe '.schema' do

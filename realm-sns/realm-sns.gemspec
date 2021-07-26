@@ -2,7 +2,7 @@
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
-version = File.read(File.expand_path('../VERSION', __dir__)).strip
+version = File.read(File.expand_path('./VERSION', __dir__)).strip
 
 Gem::Specification.new do |spec|
   spec.name        = 'realm-sns'
