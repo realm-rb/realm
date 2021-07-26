@@ -23,14 +23,21 @@ module Realm
         end
       end
 
-      def self.new(*)
-        Isolated.new(super)
-      end
+      class << self
+        def new(*)
+          Isolated.new(super)
+        end
 
-      def self.repo_name(value = :not_provided)
-        @repo_name = value.to_sym unless value == :not_provided
-        @repo_name = name.demodulize.underscore unless defined?(@repo_name)
-        @repo_name
+        def repo_name(value = :not_provided)
+          @repo_name = value.to_sym unless value == :not_provided
+          @repo_name ||= name.demodulize.underscore
+        end
+
+        def queries(type)
+          raise 'Only default queries are supported for now' unless type == :default
+
+          include DefaultRepositoryQueries
+        end
       end
 
       def readonly
