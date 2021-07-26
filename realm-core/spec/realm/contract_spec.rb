@@ -46,7 +46,7 @@ RSpec.describe Realm::Contract do
 
   it 'supports combination of struct, attributes and standard schema' do
     contract = CombinedContract.new
-    expect(contract.({foo: 'ab', another: 'c'}).errors.to_h).to eq(
+    expect(contract.(foo: 'ab', another: 'c').errors.to_h).to eq(
       foo: ['size cannot be less than 3'], bar: ['is missing'], another: ['must be an integer'],
     )
   end
