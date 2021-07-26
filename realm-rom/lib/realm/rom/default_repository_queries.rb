@@ -8,7 +8,11 @@ module Realm
       end
 
       def first(conditions = {})
-        root.where(conditions).one
+        root.where(conditions).first
+      end
+
+      def last(conditions = {})
+        root.where(conditions).last
       end
 
       def all(conditions = {})

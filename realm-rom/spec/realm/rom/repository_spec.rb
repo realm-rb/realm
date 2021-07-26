@@ -32,8 +32,13 @@ RSpec.describe Realm::ROM::Repository do
       expect(thing_repo.all(name: 'bar')).to eq([bar])
       expect(thing_repo.all(name: 'baz')).to eq([])
 
+      expect(thing_repo.first).to eq(foo)
       expect(thing_repo.first(name: 'bar')).to eq(bar)
       expect(thing_repo.first(name: 'baz')).to eq(nil)
+
+      expect(thing_repo.last).to eq(bar)
+      expect(thing_repo.last(name: 'foo')).to eq(foo)
+      expect(thing_repo.last(name: 'baz')).to eq(nil)
 
       expect(thing_repo.find(name: 'bar')).to eq(bar)
       expect(thing_repo.find(id: foo.id)).to eq(foo)
