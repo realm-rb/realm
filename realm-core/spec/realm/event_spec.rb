@@ -38,6 +38,10 @@ module TestEvents
       end
     end
   end
+
+  class FreeStructureEvent < Realm::Event
+    attribute :body, Realm::Types::Hash
+  end
 end
 
 RSpec.describe Realm::Event do
@@ -62,6 +66,10 @@ RSpec.describe Realm::Event do
         %i[bar inner] => { meta3: 3 },
         %i(baz [] member) => { meta4: 4 },
       )
+    end
+
+    it 'handles free structure events' do
+      expect(TestEvents::FreeStructureEvent.attributes_with_meta).to eq({})
     end
   end
 end
