@@ -38,7 +38,7 @@ module Realm
       end
 
       def attributes_with_meta
-        @attributes_with_meta ||= collect_attributes_with_meta(self::Body)
+        @attributes_with_meta ||= collect_attributes_with_meta(schema.key(:body).type)
       end
 
       protected
