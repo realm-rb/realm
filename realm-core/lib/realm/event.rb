@@ -49,7 +49,7 @@ module Realm
 
       private
 
-      def collect_attributes_with_meta(thing, path = [])
+      def collect_attributes_with_meta(thing, path = []) # rubocop:disable Metrics/AbcSize
         if thing.respond_to?(:schema) # struct
           thing.schema.keys.reduce({}) do |memo, key|
             memo.merge(collect_attributes_with_meta(key.type, path + [key.name]))

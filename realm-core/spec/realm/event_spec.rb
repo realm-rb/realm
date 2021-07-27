@@ -59,8 +59,8 @@ RSpec.describe Realm::Event do
     it 'returns map from attribute path to meta values if present' do
       expect(TestEvents::EventWithMeta.attributes_with_meta).to eq(
         [:foo] => { meta1: 'x', meta2: 2 },
-        [:bar, :inner] => { meta3: 3 },
-        [:baz, :[], :member] => { meta4: 4 },
+        %i[bar inner] => { meta3: 3 },
+        %i(baz [] member) => { meta4: 4 },
       )
     end
   end
