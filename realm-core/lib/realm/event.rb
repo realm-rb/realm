@@ -37,10 +37,28 @@ module Realm
         @type ||= name.demodulize.sub('Event', '').underscore
       end
 
+      def flatten_attributes_meta
+        @flatten_attributes_meta ||= collect_attributes_meta(schema.key(:body).type)
+      end
+
       protected
 
       def body_struct(type = Dry::Core::Constants::Undefined, &block)
         attribute(:body, type, &block)
+      end
+
+      private
+
+      def collect_attributes_meta(thing, path = []) # rubocop:disable Metrics/AbcSize
+        if thing.respond_to?(:schema) && thing.constructor_type != Dry::Types::Hash::Constructor # struct
+          thing.schema.keys.reduce({}) do |memo, key|
+            memo.merge(collect_attributes_meta(key.type, path + [key.name]))
+          end
+        elsif thing.constructor_type == Dry::Types::Array::Constructor # array
+          collect_attributes_meta(thing.type.member, path + [:[]])
+        else
+          thing.meta.present? ? { path => thing.meta } : {}
+        end
       end
     end
 
