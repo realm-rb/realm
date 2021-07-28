@@ -59,9 +59,9 @@ RSpec.describe Realm::Event do
     end
   end
 
-  describe '.attributes_with_meta' do
+  describe '.flatten_attributes_meta' do
     it 'returns map from attribute path to meta values if present' do
-      expect(TestEvents::EventWithMeta.attributes_with_meta).to eq(
+      expect(TestEvents::EventWithMeta.flatten_attributes_meta).to eq(
         [:foo] => { meta1: 'x', meta2: 2 },
         %i[bar inner] => { meta3: 3 },
         %i(baz [] member) => { meta4: 4 },
@@ -69,7 +69,7 @@ RSpec.describe Realm::Event do
     end
 
     it 'handles free structure events' do
-      expect(TestEvents::FreeStructureEvent.attributes_with_meta).to eq({})
+      expect(TestEvents::FreeStructureEvent.flatten_attributes_meta).to eq({})
     end
   end
 end
