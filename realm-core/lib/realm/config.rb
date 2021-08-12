@@ -36,7 +36,8 @@ module Realm
       repos_path = File.join(class_path, 'repositories')
       repos_module = namespaced('Repositories')
       {
-        root_module: root_module,
+        class_namespace: namespaced_classes ? root_module : nil,
+        db_namespace: engine_class ? namespace : nil,
         class_path: class_path,
         repos_path: repos_path,
         repos_module: repos_module,

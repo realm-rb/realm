@@ -3,11 +3,12 @@
 module Realm
   module ROM
     class Gateway
-      def initialize(url:, root_module:, class_path:, migration_path:, **)
+      def initialize(url:, class_path:, migration_path:, class_namespace: nil, db_namespace: nil, **)
         @url = url
-        @root_module = root_module
         @class_path = class_path
         @migration_path = migration_path
+        @class_namespace = class_namespace
+        @db_namespace = db_namespace
       end
 
       def health
@@ -33,12 +34,12 @@ module Realm
 
       def config
         ::ROM::Configuration.new(:sql, @url, **config_options).tap do |config|
-          config.auto_registration(@class_path, namespace: @root_module.to_s)
+          config.auto_registration(@class_path, namespace: @class_namespace&.to_s || false)
         end
       end
 
       def config_options
-        { search_path: @root_module.to_s.underscore, migrator: { path: @migration_path } }
+        { search_path: @db_namespace, migrator: { path: @migration_path } }
       end
 
       def default_gateway

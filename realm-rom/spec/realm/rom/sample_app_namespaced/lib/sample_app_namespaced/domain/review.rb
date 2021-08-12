@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SampleApp
+module SampleAppNamespaced
   module Domain
     module Review
       class CreateCommandHandler < Realm::CommandHandler
