@@ -38,7 +38,6 @@ RSpec.describe 'Integration of realm SNS with core' do
     Realm.setup(
       TestIntegrationService,
       plugins: :sns,
-      engine_class: nil,
       prefix: 'integration-test',
       dependencies: dependencies,
       event_gateway: { type: :sns, topic_arn: topic_arn, events_module: TestIntegrationService::Domain::Events },

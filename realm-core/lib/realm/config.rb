@@ -10,9 +10,12 @@ module Realm
     option :database_url,         default: proc {}
     option :prefix,               default: proc {}
     option :namespace,            default: proc { root_module.to_s.underscore }
-    option :domain_module,        default: proc { "#{root_module}::Domain" }
-    option :engine_class,         default: proc { "#{root_module}::Engine" }
-    option :engine_path,          default: proc { engine_class&.to_s&.safe_constantize&.root }
+    option :namespaced_classes,   default: proc { app_class.nil? }
+    option :app_class,            default: proc { "#{root_module}::Application".safe_constantize }
+    option :engine_class,         default: proc { "#{root_module}::Engine".safe_constantize }
+    option :domain_module,        default: proc { namespaced('Domain').safe_constantize }
+    option :root_path,            default: proc { (app_class || engine_class)&.root }
+    option :app_root,             default: proc { root_path && File.join(root_path, 'app') }
     option :logger,               default: proc {}
     option :plugins,              default: proc { [] }, reader: false
     option :dependencies,         default: proc { {} }
@@ -27,17 +30,17 @@ module Realm
     end
 
     def persistence_gateway
-      return {} unless @persistence_gateway
+      return {} unless @persistence_gateway && app_root
 
-      class_path = engine_path && "#{engine_path}/app/persistence/#{namespace}"
-      repos_path = class_path && "#{class_path}/repositories"
-      repos_module = "#{root_module}::Repositories"
+      class_path = File.join([app_root, 'persistence', namespaced_classes ? namespace : nil].compact)
+      repos_path = File.join(class_path, 'repositories')
+      repos_module = namespaced('Repositories')
       {
         root_module: root_module,
         class_path: class_path,
         repos_path: repos_path,
         repos_module: repos_module,
-        migration_path: engine_path && "#{engine_path}/db/migrate",
+        migration_path: File.join(root_path, 'db', 'migrate'),
         repositories: repositories(repos_path, repos_module),
       }.merge(@persistence_gateway)
     end
@@ -51,6 +54,10 @@ module Realm
         matches = %r{^#{repos_path}/(.+)\.rb$}.match(filename)
         all << "#{repos_module}::#{matches[1].camelize}".constantize if matches
       end
+    end
+
+    def namespaced(class_name)
+      namespaced_classes ? "#{root_module}::#{class_name}" : class_name
     end
   end
 end

@@ -24,7 +24,6 @@ RSpec.describe 'Integration of Elasticsearch plugin with realm core' do
     Realm.setup(
       TestIntegrationService,
       plugins: :elasticsearch,
-      engine_class: nil,
       persistence_gateway: {
         type: :elasticsearch,
         url: ENV.fetch('ELASTICSEARCH_URL'),

@@ -15,8 +15,7 @@ RSpec.describe 'Integration of ROM plugin with realm core' do
     Realm.setup(
       SampleApp,
       plugins: :rom,
-      engine_class: nil,
-      engine_path: app_root,
+      root_path: app_root,
       persistence_gateway: { type: :rom, url: ENV['DATABASE_URL'] },
     ).runtime
   end
