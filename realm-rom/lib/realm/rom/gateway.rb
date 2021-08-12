@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
+require 'dry-initializer'
+
 module Realm
   module ROM
     class Gateway
-      def initialize(url:, class_path:, migration_path:, class_namespace: nil, db_namespace: nil, **)
-        @url = url
-        @class_path = class_path
-        @migration_path = migration_path
-        @class_namespace = class_namespace
-        @db_namespace = db_namespace
+      extend Dry::Initializer
+
+      with_options reader: false do
+        option :url
+        option :class_path
+        option :migration_path
+        option :class_namespace, default: proc {}
+        option :db_namespace, default: proc {}
       end
 
       def health

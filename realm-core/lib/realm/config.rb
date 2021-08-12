@@ -29,7 +29,8 @@ module Realm
       Array(@plugins)
     end
 
-    def persistence_gateway
+    # TODO: move this logic to realm-rom
+    def persistence_gateway # rubocop:disable Metrics/AbcSize
       return {} unless @persistence_gateway && app_root
 
       class_path = File.join([app_root, 'persistence', namespaced_classes ? namespace : nil].compact)
