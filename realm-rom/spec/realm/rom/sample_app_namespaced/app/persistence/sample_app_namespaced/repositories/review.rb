@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SampleApp
+module SampleAppNamespaced
   module Repositories
     class Review < Realm::ROM::Repository[:reviews]
       commands :create

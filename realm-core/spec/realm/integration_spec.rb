@@ -94,7 +94,6 @@ module TestIntegrationService
     let(:realm) do
       Realm.setup(
         TestIntegrationService,
-        engine_class: nil,
         dependencies: dependencies,
         event_gateway: { type: :internal_loop, events_module: Domain::Events, isolated: true },
       ).runtime

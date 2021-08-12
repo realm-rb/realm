@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
+require 'dry-initializer'
+
 module Realm
   module ROM
     class Gateway
-      def initialize(url:, root_module:, class_path:, migration_path:, **)
-        @url = url
-        @root_module = root_module
-        @class_path = class_path
-        @migration_path = migration_path
+      extend Dry::Initializer
+
+      with_options reader: false do
+        option :url
+        option :class_path
+        option :migration_path
+        option :class_namespace, default: proc {}
+        option :db_namespace, default: proc {}
       end
 
       def health
@@ -33,12 +38,12 @@ module Realm
 
       def config
         ::ROM::Configuration.new(:sql, @url, **config_options).tap do |config|
-          config.auto_registration(@class_path, namespace: @root_module.to_s)
+          config.auto_registration(@class_path, namespace: @class_namespace&.to_s || false)
         end
       end
 
       def config_options
-        { search_path: @root_module.to_s.underscore, migrator: { path: @migration_path } }
+        { search_path: @db_namespace, migrator: { path: @migration_path } }
       end
 
       def default_gateway
