@@ -41,11 +41,5 @@ module Realm
         @container.register_factory(repo_class, gateway, as: "#{repo_class.name.demodulize.underscore}_repo")
       end
     end
-
-    def constantize(*parts)
-      return parts[0] unless parts[0].is_a?(String)
-
-      parts.join('::').safe_constantize
-    end
   end
 end

@@ -18,7 +18,6 @@ module Realm
       register_logger
       register_dependencies
       setup_plugins
-      config_persistence
       self
     end
 
@@ -51,15 +50,10 @@ module Realm
     end
 
     def setup_plugins
-      Plugin.descendants.each do |plugin|
-        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.plugin_name)
+      cfg.plugins.each do |plugin_config|
+        klass = Plugin.descendants.find { |c| c.plugin_name == plugin_config[:name].to_sym }
+        klass.setup(cfg, plugin_config, container)
       end
-    end
-
-    def config_persistence
-      return unless cfg.persistence_gateway.present?
-
-      Persistence.setup(container, cfg.persistence_gateway[:repositories])
     end
 
     def constantize(*parts)
