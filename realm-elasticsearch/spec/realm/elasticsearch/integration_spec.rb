@@ -23,12 +23,13 @@ RSpec.describe 'Integration of Elasticsearch plugin with realm core' do
   let(:realm) do
     Realm.setup(
       TestIntegrationService,
-      plugins: :elasticsearch,
-      persistence_gateway: {
-        type: :elasticsearch,
-        url: ENV.fetch('ELASTICSEARCH_URL'),
-        repositories: [TestIntegrationService::Repositories::Review],
-      },
+      plugins: [
+        {
+          name: :elasticsearch,
+          url: ENV.fetch('ELASTICSEARCH_URL'),
+          repositories: [TestIntegrationService::Repositories::Review],
+        },
+      ]
     ).runtime
   end
 
@@ -46,7 +47,7 @@ RSpec.describe 'Integration of Elasticsearch plugin with realm core' do
 
     expect(realm['review_repo'].all[:docs]).to include(
       { id: kind_of(String), text: 'Awesome' },
-      { id: 123, text: 'Int ID doc' },
+      { id: '123', text: 'Int ID doc' },
     )
   end
 end

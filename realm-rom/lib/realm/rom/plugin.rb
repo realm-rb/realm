@@ -4,6 +4,7 @@ module Realm
   module ROM
     class Plugin < Realm::Plugin
       def setup
+        # TODO: add namespace to support for multiple persistence gateways
         @gateway = Gateway.new(gateway_config)
         container.register('persistence.gateway', @gateway)
         container.register(:rom, @gateway) # for backward compatibility as we access it a lot in tests
