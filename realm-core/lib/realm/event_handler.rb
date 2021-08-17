@@ -21,7 +21,7 @@ module Realm
     end
 
     class << self
-      attr_reader :trigger_mapping, :event_namespace
+      attr_reader :trigger_mapping
 
       def bind_runtime(runtime)
         RuntimeBound.new(self, runtime)
@@ -42,11 +42,12 @@ module Realm
         defined?(@trigger_mapping) ? @trigger_mapping.keys.uniq : []
       end
 
-      protected
-
-      def namespace(value)
-        @event_namespace = value
+      def namespace(value = :not_provided)
+        @namespace = value.to_sym unless value == :not_provided
+        @namespace ||= :default
       end
+
+      protected
 
       def on(*triggers, run: nil, **options, &block)
         @method_triggers = triggers

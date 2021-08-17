@@ -12,21 +12,15 @@ end
 RSpec.describe Realm::EventRouter do
   let(:stack) { [] }
   let(:runtime) { Realm::Runtime.new(stack: stack) }
-  let(:gateways_spec) do
-    {
-      ns1: { type: :internal_loop, events_module: EventRouterSpec },
-      ns2: { type: :internal_loop, events_module: EventRouterSpec, default: true },
-    }
-  end
-  let(:gateway1) { instance_double(Realm::EventRouter::InternalLoopGateway) }
-  let(:gateway2) { instance_double(Realm::EventRouter::InternalLoopGateway) }
-  subject { described_class.new(gateways_spec, runtime: runtime, prefix: 'test-prefix') }
+  let(:gateway1) { Realm::InternalEventLoop::Gateway.new(event_factory: event_factory, namespace: :ns1) }
+  let(:gateway2) { Realm::InternalEventLoop::Gateway.new(event_factory: event_factory) }
+  let(:event_factory) { Realm::EventFactory.new(EventRouterSpec) }
+
+  subject { described_class.new(runtime: runtime, prefix: 'test-prefix') }
 
   before do
-    expect(Realm::EventRouter::InternalLoopGateway).to receive(:new)
-      .with(hash_including(namespace: :ns1)).and_return(gateway1)
-    expect(Realm::EventRouter::InternalLoopGateway).to receive(:new)
-      .with(hash_including(namespace: :ns2)).and_return(gateway2)
+    subject.register_gateway(gateway1)
+    subject.register_gateway(gateway2)
   end
 
   describe '#register' do
@@ -59,7 +53,7 @@ RSpec.describe Realm::EventRouter do
       subject.trigger('ns1/sample', foo: 123)
 
       expect(gateway2).to receive(:trigger).with('sample', foo: 456)
-      subject.trigger('ns2/sample', foo: 456)
+      subject.trigger('sample', foo: 456)
     end
 
     it 'triggers event on default gateway if no namespace is specified' do
@@ -79,7 +73,7 @@ RSpec.describe Realm::EventRouter do
       subject.workers(:ns1, foo: 123)
 
       expect(gateway2).to receive(:worker).with(foo: 456)
-      subject.workers(:ns2, foo: 456)
+      subject.workers(:default, foo: 456)
     end
 
     it 'calls worker method on all gateways if no namespace is specified' do
@@ -99,14 +93,21 @@ RSpec.describe Realm::EventRouter do
       expect(subject.active_queues).to eq(%i[queue1 queue2])
     end
 
-    context 'with domain resolver' do
-      let(:domain_resolver) { double(:domain_resolver, all_event_handlers: [:handler1]) }
+    context 'for gateways without handlers registration on init' do
+      let(:gateway2) do
+        Class.new(Realm::InternalEventLoop::Gateway) do
+          register_handlers_on_init false
+        end.new(event_factory: event_factory)
+      end
+      let(:handler1) { Class.new(Realm::EventHandler) }
+      let(:domain_resolver) { double(:domain_resolver, all_event_handlers: [handler1]) }
       subject do
-        described_class.new(gateways_spec, runtime: runtime, prefix: 'test-prefix', domain_resolver: domain_resolver)
+        described_class.new(runtime: runtime, prefix: 'test-prefix', domain_resolver: domain_resolver)
       end
 
       it 'triggers auto registration of event handlers' do
-        expect(gateway2).to receive(:register).with(:handler1)
+        # require 'pry'; binding.pry
+        expect(gateway2).to receive(:register).with(handler1)
         subject.active_queues
       end
     end

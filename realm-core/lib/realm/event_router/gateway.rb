@@ -9,8 +9,9 @@ module Realm
 
       attr_reader :namespace
 
-      def self.auto_register_on_init
-        false
+      def self.register_handlers_on_init(value = :not_provided)
+        @register_handlers_on_init = value unless value == :not_provided
+        @register_handlers_on_init ||= false
       end
 
       def initialize(event_factory:, namespace: :default, **)
@@ -45,8 +46,8 @@ module Realm
         []
       end
 
-      def auto_register_on_init
-        self.class.auto_register_on_init
+      def register_handlers_on_init
+        self.class.register_handlers_on_init
       end
 
       protected
