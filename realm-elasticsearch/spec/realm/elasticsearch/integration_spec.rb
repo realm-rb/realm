@@ -23,13 +23,11 @@ RSpec.describe 'Integration of Elasticsearch plugin with realm core' do
   let(:realm) do
     Realm.setup(
       TestIntegrationService,
-      plugins: [
-        {
-          name: :elasticsearch,
-          url: ENV.fetch('ELASTICSEARCH_URL'),
-          repositories: [TestIntegrationService::Repositories::Review],
-        },
-      ]
+      plugins: {
+        name: :elasticsearch,
+        url: ENV.fetch('ELASTICSEARCH_URL'),
+        repositories: [TestIntegrationService::Repositories::Review],
+      },
     ).runtime
   end
 
