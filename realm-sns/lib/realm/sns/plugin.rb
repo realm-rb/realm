@@ -3,8 +3,21 @@
 module Realm
   module SNS
     class Plugin < Realm::Plugin
-      def self.setup(_config, container)
-        container.register('event_router.gateway_classes.sns', SNS::Gateway)
+      inject EventRouter
+
+      def setup
+        event_router.register_gateway(gateway)
+      end
+
+      private
+
+      def gateway
+        @gateway ||= container.create(
+          SNS::Gateway,
+          queue_prefix: config[:prefix],
+          event_factory: EventFactory.new(plugin_config.fetch(:events_module)),
+          **plugin_config.except(:events_module),
+        )
       end
     end
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Realm::SNS::Gateway::QueueManager do
+RSpec.describe Realm::SNS::QueueManager do
   let(:sqs) { Aws::SQS::Resource.new }
   let(:queue_names) { sqs.queues.map { |q| q.url.sub(%r{^.*/}, '') } }
 
@@ -15,13 +15,13 @@ RSpec.describe Realm::SNS::Gateway::QueueManager do
 
     it 'returns queue by name' do
       queue = subject.get(name: 'sample_queue')
-      expect(queue).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(queue).to be_a Realm::SNS::QueueAdapter
       expect(queue.url).to eq existing_queue.url
     end
 
     it 'returns queue by arn' do
       queue = subject.get(arn: existing_queue.attributes['QueueArn'])
-      expect(queue).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(queue).to be_a Realm::SNS::QueueAdapter
       expect(queue.url).to eq existing_queue.url
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe Realm::SNS::Gateway::QueueManager do
   describe '#create' do
     it 'creates prefixed queue' do
       queue = subject.create('sample_queue')
-      expect(queue).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(queue).to be_a Realm::SNS::QueueAdapter
       expect(sqs.get_queue_by_name(queue_name: 'test_prefix-sample_queue').url).to eq queue.url
     end
   end
@@ -39,13 +39,13 @@ RSpec.describe Realm::SNS::Gateway::QueueManager do
 
     it 'retrieves queue if exists' do
       queue = subject.provide('sample_queue')
-      expect(queue).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(queue).to be_a Realm::SNS::QueueAdapter
       expect(sqs.get_queue_by_name(queue_name: 'test_prefix-sample_queue').url).to eq existing_queue.url
     end
 
     it 'creates queue if does not exist' do
       queue = subject.provide('another_queue')
-      expect(queue).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(queue).to be_a Realm::SNS::QueueAdapter
       expect(sqs.get_queue_by_name(queue_name: 'test_prefix-another_queue').url).to eq queue.url
     end
   end
@@ -66,7 +66,7 @@ RSpec.describe Realm::SNS::Gateway::QueueManager do
 
     it 'refuses to cleanup without prefix' do
       expect { described_class.new.cleanup(except: used_queue) }.to raise_error(
-        Realm::SNS::Gateway::QueueManager::CleanupWithoutPrefix,
+        Realm::SNS::QueueManager::CleanupWithoutPrefix,
       )
     end
   end

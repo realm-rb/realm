@@ -16,15 +16,15 @@ module Realm
     option :root_path,            default: proc { (app_class || engine_class)&.root }
     option :app_root,             default: proc { root_path && File.join(root_path, 'app') }
     option :logger,               default: proc {}
-    option :plugins,              default: proc { [] }
+    option :plugins,              default: proc { [] }, reader: false
     option :dependencies,         default: proc { {} }
-    option :event_gateway,        default: proc {}, reader: false
-    option :event_gateways,       default: proc {
-      @event_gateway ? { default: { **@event_gateway, default: true } } : {}
-    }
 
     def plugins
-      Array(@plugins)
+      Array.wrap(@plugins)
+    end
+
+    def [](key)
+      send(key)
     end
 
     private

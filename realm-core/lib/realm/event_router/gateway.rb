@@ -3,20 +3,25 @@
 module Realm
   class EventRouter
     class Gateway
+      include Mixins::DependencyInjection
+
+      inject Runtime
+
+      attr_reader :namespace
+
       def self.auto_register_on_init
         false
       end
 
-      def initialize(event_factory:, namespace: :default, runtime: nil, **)
+      def initialize(event_factory:, namespace: :default, **)
         @namespace = namespace
         @event_factory = event_factory
-        @runtime = runtime
       end
 
       def register(handler_class)
         # TODO: validate event_types for existence of matching class
         handler_class.event_types.each do |event_type|
-          add_listener(event_type, handler_class.bind_runtime(@runtime))
+          add_listener(event_type, handler_class.bind_runtime(runtime))
         end
       end
 
@@ -38,6 +43,10 @@ module Realm
 
       def queues
         []
+      end
+
+      def auto_register_on_init
+        self.class.auto_register_on_init
       end
 
       protected

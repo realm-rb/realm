@@ -32,9 +32,7 @@ module Realm
     end
 
     def register_event_router
-      return if cfg.event_gateways.empty?
-
-      container.register_factory(EventRouter, cfg.event_gateways, prefix: cfg.prefix)
+      container.register_factory(EventRouter, prefix: cfg.prefix)
     end
 
     def register_runtime
@@ -52,7 +50,9 @@ module Realm
     def setup_plugins
       cfg.plugins.each do |plugin_config|
         klass = Plugin.descendants.find { |c| c.plugin_name == plugin_config[:name].to_sym }
-        klass.setup(cfg, plugin_config, container)
+        raise "Unknown plugin #{plugin_config[:name]}" unless klass
+
+        container.create(klass, cfg, plugin_config, container).setup
       end
     end
 
