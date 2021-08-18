@@ -24,7 +24,7 @@ module Realm
       end
 
       class << self
-        def new(*)
+        def new(...)
           Isolated.new(super)
         end
 
