@@ -95,7 +95,7 @@ module TestIntegrationService
       Realm.setup(
         TestIntegrationService,
         dependencies: dependencies,
-        event_gateway: { type: :internal_loop, events_module: Domain::Events, isolated: true },
+        plugins: { name: :internal_event_loop, events_module: Domain::Events, isolated: true },
       ).runtime
     end
 

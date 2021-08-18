@@ -125,7 +125,7 @@ RSpec.describe Realm::SNS::Gateway do
     it 'raises error' do
       expect {
         subject.register(SNSGatewaySpec::VeryLongLongLongLongLongLongLongLongLongLongLongLongLongLongNameHandler)
-      }.to raise_error(Realm::SNS::Gateway::QueueManager::QueueNameTooLong)
+      }.to raise_error(Realm::SNS::QueueManager::QueueNameTooLong)
     end
   end
 
@@ -150,8 +150,8 @@ RSpec.describe Realm::SNS::Gateway do
       subject.register(SNSGatewaySpec::SampleHandler)
       subject.register(SNSGatewaySpec::SampleAnyHandler)
       expect(subject.queues.size).to eq 2
-      expect(subject.queues[0]).to be_a Realm::SNS::Gateway::QueueAdapter
-      expect(subject.queues[1]).to be_a Realm::SNS::Gateway::QueueAdapter
+      expect(subject.queues[0]).to be_a Realm::SNS::QueueAdapter
+      expect(subject.queues[1]).to be_a Realm::SNS::QueueAdapter
     end
   end
 end

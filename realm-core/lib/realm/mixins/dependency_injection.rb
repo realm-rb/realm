@@ -24,6 +24,11 @@ module Realm
           deps.freeze
         end
 
+        def inherited(subclass)
+          subclass.instance_variable_set(:@deps, @deps.dup)
+          super
+        end
+
         private
 
         def deps

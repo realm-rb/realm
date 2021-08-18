@@ -2,16 +2,25 @@
 
 module Realm
   class Plugin
-    class << self
-      def plugin_name(value = :not_provided)
-        @plugin_name = value.to_sym unless value == :not_provided
-        @plugin_name = name.split('::')[-2].underscore.to_sym unless defined?(@plugin_name)
-        @plugin_name
-      end
+    include Mixins::DependencyInjection
 
-      def setup(_config, _container)
-        raise NotImplementedError
-      end
+    def self.plugin_name(value = :not_provided)
+      @plugin_name = value.to_sym unless value == :not_provided
+      @plugin_name ||= name.split('::')[-2].underscore.to_sym
     end
+
+    def initialize(config, plugin_config, container)
+      @config = config
+      @plugin_config = plugin_config
+      @container = container
+    end
+
+    def setup
+      raise NotImplementedError
+    end
+
+    protected
+
+    attr_reader :config, :plugin_config, :container
   end
 end

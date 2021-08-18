@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 module Realm
-  class EventRouter
-    class InternalLoopGateway < Gateway
-      def self.auto_register_on_init
-        true
-      end
+  module InternalEventLoop
+    class Gateway < EventRouter::Gateway
+      register_handlers_on_init true
 
       def initialize(isolated: false, **)
         super

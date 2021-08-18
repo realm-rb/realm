@@ -3,10 +3,16 @@
 module Realm
   module Elasticsearch
     class Plugin < Realm::Plugin
-      def self.setup(config, container)
-        return unless config.persistence_gateway[:type] == :elasticsearch
+      def setup
+        # TODO: add namespace to support for multiple persistence gateways
+        container.register('persistence.gateway', persistence_setup.gateway)
+        persistence_setup.register_repos(container)
+      end
 
-        container.register_factory(Gateway, **config.persistence_gateway, as: 'persistence.gateway')
+      private
+
+      def persistence_setup
+        @persistence_setup ||= Persistence::Setup.new(config, plugin_config, Gateway)
       end
     end
   end

@@ -28,7 +28,7 @@ module InternalLoopGatewaySpec
   end
 end
 
-RSpec.describe Realm::EventRouter::InternalLoopGateway do
+RSpec.describe Realm::InternalEventLoop::Gateway do
   def test_event_flow # rubocop:disable Metrics/AbcSize
     gateways[rand(0..1)].trigger(:something_happened, foo: { bar: 123 })
 

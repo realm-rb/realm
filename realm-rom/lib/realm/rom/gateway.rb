@@ -12,7 +12,7 @@ module Realm
         option :class_path
         option :migration_path
         option :class_namespace, default: proc {}
-        option :db_namespace, default: proc {}
+        option :schema, default: proc {}
       end
 
       def health
@@ -43,7 +43,7 @@ module Realm
       end
 
       def config_options
-        { search_path: @db_namespace, migrator: { path: @migration_path } }
+        { search_path: @schema, migrator: { path: @migration_path } }
       end
 
       def default_gateway

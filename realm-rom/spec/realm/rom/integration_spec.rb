@@ -9,14 +9,15 @@ RSpec.describe 'Integration of ROM plugin with realm core' do
   let(:realm) do
     Realm.setup(
       root_module,
-      plugins: :rom,
       root_path: app_root,
       namespaced_classes: namespaced_classes,
-      persistence_gateway: {
-        type: :rom,
-        url: ENV['DATABASE_URL'],
-        db_namespace: root_module.to_s.underscore,
-      },
+      plugins: [
+        {
+          name: :rom,
+          url: ENV['DATABASE_URL'],
+          schema: root_module.to_s.underscore,
+        },
+      ],
     ).runtime
   end
 

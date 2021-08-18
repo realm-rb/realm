@@ -3,12 +3,17 @@
 module Realm
   module ROM
     class Plugin < Realm::Plugin
-      def self.setup(config, container)
-        return unless config.persistence_gateway[:type] == :rom
+      def setup
+        # TODO: add namespace to support for multiple persistence gateways
+        container.register('persistence.gateway', persistence_setup.gateway)
+        container.register(:rom, persistence_setup.gateway) # for backward compatibility as we access it a lot in tests
+        persistence_setup.register_repos(container)
+      end
 
-        gateway = Gateway.new(config.persistence_gateway)
-        container.register('persistence.gateway', gateway)
-        container.register(:rom, gateway) # for backward compatibility as we access it a lot in tests
+      private
+
+      def persistence_setup
+        @persistence_setup ||= Persistence::Setup.new(config, plugin_config, Gateway)
       end
     end
   end

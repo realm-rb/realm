@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Realm
-  class Persistence
-    class QueryCannotModifyState < Realm::Error; end
-
+  module Persistence
     class RepositoryQueryHandlerAdapter
       def initialize(repo)
         @repo = repo.respond_to?(:readonly) ? repo.readonly : repo

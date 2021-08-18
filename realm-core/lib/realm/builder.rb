@@ -18,7 +18,6 @@ module Realm
       register_logger
       register_dependencies
       setup_plugins
-      config_persistence
       self
     end
 
@@ -33,9 +32,7 @@ module Realm
     end
 
     def register_event_router
-      return if cfg.event_gateways.empty?
-
-      container.register_factory(EventRouter, cfg.event_gateways, prefix: cfg.prefix)
+      container.register_factory(EventRouter, prefix: cfg.prefix)
     end
 
     def register_runtime
@@ -51,15 +48,12 @@ module Realm
     end
 
     def setup_plugins
-      Plugin.descendants.each do |plugin|
-        plugin.setup(cfg, container) if cfg.plugins.include?(plugin.plugin_name)
+      cfg.plugins.each do |plugin_config|
+        klass = Plugin.descendants.find { |c| c.plugin_name == plugin_config[:name].to_sym }
+        raise "Unknown plugin #{plugin_config[:name]}" unless klass
+
+        container.create(klass, cfg, plugin_config, container).setup
       end
-    end
-
-    def config_persistence
-      return unless cfg.persistence_gateway.present?
-
-      Persistence.setup(container, cfg.persistence_gateway[:repositories])
     end
 
     def constantize(*parts)
