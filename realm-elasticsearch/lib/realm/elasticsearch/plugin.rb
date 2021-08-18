@@ -12,6 +12,10 @@ module Realm
 
       private
 
+      def gateway_config
+        @gateway_config ||= Persistence::GatewayConfigFactory.generate(config, plugin_config)
+      end
+
       def register_repos
         repositories = plugin_config[:repositories] || scan_repositories
         repositories.each do |repo_class|

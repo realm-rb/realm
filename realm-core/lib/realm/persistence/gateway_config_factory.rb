@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Realm
-  module ROM
+  module Persistence
     class GatewayConfigFactory
       def self.generate(...)
         new(...).generate
