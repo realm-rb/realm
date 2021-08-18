@@ -27,7 +27,7 @@ RSpec.describe Realm::Setup do
       dependencies: {
         service1: :service1_payload,
         service2: :service2_payload,
-      }
+      },
     }
   end
 
