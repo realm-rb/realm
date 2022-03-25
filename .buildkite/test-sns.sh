@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-.buildkite/wait-for-it.sh localstack:4566
 cd realm-sns
 bundle install
+../.buildkite/wait-for-it.sh localstack:4566
 bundle exec rspec \
   && bundle exec rubocop -c ../.rubocop.yml
