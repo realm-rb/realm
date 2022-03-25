@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.7.0'
   spec.files = Dir['{lib}/**/*', 'Rakefile', 'README.md', 'LICENCE']
 
-  spec.add_dependency 'activesupport', '~> 6.0'
+  spec.add_dependency 'activesupport', '>= 6.0'
   spec.add_dependency 'dry-container', '~> 0.7'
   spec.add_dependency 'dry-core', '~> 0.6'
   spec.add_dependency 'dry-initializer', '~> 3.0'
@@ -26,4 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop'
+
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

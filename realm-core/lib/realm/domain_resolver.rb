@@ -7,7 +7,7 @@ module Realm
     def initialize(domain_module = nil)
       # nil domain resolver is useful in tests
       @domain_module = domain_module
-      @index = DOMAIN_CLASS_TYPES.map { |t| [t, {}] }.to_h
+      @index = DOMAIN_CLASS_TYPES.to_h { |t| [t, {}] }
       scan(domain_module) if domain_module
     end
 
