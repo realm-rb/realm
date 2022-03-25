@@ -49,11 +49,15 @@ module Realm
 
     def setup_plugins
       cfg.plugins.each do |plugin_config|
-        klass = Plugin.descendants.find { |c| c.plugin_name == plugin_config[:name].to_sym }
+        klass = plugin_class(plugin_config[:name])
         raise "Unknown plugin #{plugin_config[:name]}" unless klass
 
         container.create(klass, cfg, plugin_config, container).setup
       end
+    end
+
+    def plugin_class(name)
+      name.is_a?(Class) ? name : Plugin.descendants.find { |c| c.plugin_name == name.to_sym }
     end
 
     def constantize(*parts)
