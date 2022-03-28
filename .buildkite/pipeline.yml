@@ -1,12 +1,27 @@
 steps:
-  - label: ":bomb: Test realm-core"
-    command: docker-compose run app .buildkite/test-core.sh
+  - label: ":bomb: Test realm-core (ruby 2.7)"
+    command: docker-compose run ruby2 .buildkite/test-core.sh
 
-  - label: ":bomb: Test realm-sns"
-    command: docker-compose run app .buildkite/test-sns.sh
+  - label: ":bomb: Test realm-core (ruby 3.1)"
+    command: docker-compose run ruby3 .buildkite/test-core.sh
 
-  - label: ":bomb: Test realm-rom"
-    command: docker-compose run app .buildkite/test-rom.sh
 
-  - label: ":bomb: Test realm-elasticsearch"
-    command: docker-compose run app .buildkite/test-elasticsearch.sh
+  - label: ":bomb: Test realm-sns (ruby 2.7)"
+    command: docker-compose run ruby2 .buildkite/test-sns.sh
+
+  - label: ":bomb: Test realm-sns (ruby 3.1)"
+    command: docker-compose run ruby3 .buildkite/test-sns.sh
+
+
+  - label: ":bomb: Test realm-rom (ruby 2.7)"
+    command: docker-compose run ruby2 .buildkite/test-rom.sh
+
+  - label: ":bomb: Test realm-rom (ruby 3.1)"
+    command: docker-compose run ruby3 .buildkite/test-rom.sh
+
+
+  - label: ":bomb: Test realm-elasticsearch (ruby 2.7)"
+    command: docker-compose run ruby2 .buildkite/test-elasticsearch.sh
+
+  - label: ":bomb: Test realm-elasticsearch (ruby 3.1)"
+    command: docker-compose run ruby3 .buildkite/test-elasticsearch.sh
