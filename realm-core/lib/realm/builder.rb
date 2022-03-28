@@ -44,7 +44,7 @@ module Realm
     end
 
     def register_dependencies
-      container.register_all(**cfg.dependencies)
+      container.register_all(cfg.dependencies)
     end
 
     def setup_plugins

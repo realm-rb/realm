@@ -1,0 +1,7 @@
+FROM ruby:2.7-bullseye
+
+WORKDIR /app
+
+ENV BUNDLE_SILENCE_ROOT_WARNING=1
+ENV GEM_HOME=~/.bundle/gems
+ENV GEM_PATH=~/.bundle/gems

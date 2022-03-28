@@ -86,7 +86,7 @@ module Realm
         raise 'Message is missing event type' unless event_type
 
         payload = JSON.parse(msg.body).deep_symbolize_keys
-        @event_factory.create_event(event_type, payload)
+        @event_factory.create_event(event_type, **payload)
       end
 
       def message_receive_count(msg)

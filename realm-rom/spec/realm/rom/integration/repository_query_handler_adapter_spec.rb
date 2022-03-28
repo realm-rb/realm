@@ -13,7 +13,7 @@ module RepositoryQueryHandlerAdapterSpec
       users.to_a
     end
 
-    def one(**conditions)
+    def one(conditions)
       users.where(**conditions.slice(:name)).one!
     end
   end

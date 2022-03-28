@@ -19,8 +19,8 @@ module Realm
       context.blank? ? self : Session.new(self, context)
     end
 
-    def worker(*args)
-      MultiWorker.new(event_router.try(:workers, *args) || [])
+    def worker(...)
+      MultiWorker.new(event_router.try(:workers, ...) || [])
     end
 
     def health

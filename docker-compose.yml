@@ -35,9 +35,31 @@ services:
     cap_add:
       - IPC_LOCK
 
-  app:
+  ruby2:
     build:
       context: .
+      dockerfile: Dockerfile.ruby2.7
+    depends_on:
+      - localstack
+      - postgres
+      - elasticsearch
+    command: ["cat"]
+    tty: true
+    volumes:
+      - .:/app
+    environment:
+      LOG_LEVEL: warn
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: eu-west-1
+      AWS_ACCESS_KEY_ID: fake-access-key-id
+      AWS_SECRET_ACCESS_KEY: fake-secret-access-key
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      DATABASE_URL: postgresql://postgres:password@postgres/db
+
+  ruby3:
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby3.1
     depends_on:
       - localstack
       - postgres

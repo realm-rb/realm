@@ -25,10 +25,9 @@ module Realm
     private
 
     def collect_event_classes(root_module)
-      root_module_str = root_module.to_s
-      root_module.constants.each_with_object({}) do |const_sym, all|
+      root_module.constants(false).each_with_object({}) do |const_sym, all|
         const = root_module.const_get(const_sym)
-        next unless const.is_a?(Module) && const.to_s.start_with?(root_module_str)
+        next unless const.is_a?(Module)
 
         all[const.type] = const if const < Event
         all.merge!(collect_event_classes(const))

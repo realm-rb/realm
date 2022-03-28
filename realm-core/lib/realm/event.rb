@@ -66,8 +66,8 @@ module Realm
       self.class.type
     end
 
-    def to_json(*args)
-      JSON.generate(to_h, *args)
+    def to_json(...)
+      JSON.generate(to_h, ...)
     end
   end
 end
