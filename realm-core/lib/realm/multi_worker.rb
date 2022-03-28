@@ -6,8 +6,8 @@ module Realm
       @workers = workers
     end
 
-    def start(*args)
-      @workers.each { |w| w.start(*args) }
+    def start(...)
+      @workers.each { |w| w.start(...) }
       self
     end
 

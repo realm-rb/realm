@@ -4,7 +4,7 @@ module Realm
   class CommandHandler < Realm::ActionHandler
     include Mixins::Reactive
 
-    def call(*)
+    def call(...)
       gateway = context[:rom]&.gateways&.dig(:default)
       gateway ? gateway.transaction { super } : super
     end

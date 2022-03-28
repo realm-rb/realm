@@ -40,8 +40,9 @@ RSpec.describe Realm::ROM::Repository do
       expect(thing_repo.last(name: 'foo')).to eq(foo)
       expect(thing_repo.last(name: 'baz')).to eq(nil)
 
-      expect(thing_repo.find(name: 'bar')).to eq(bar)
+      expect(thing_repo.find(foo.id)).to eq(foo)
       expect(thing_repo.find(id: foo.id)).to eq(foo)
+      expect(thing_repo.find(name: 'bar')).to eq(bar)
       expect { thing_repo.find(name: 'baz') }.to raise_error
     end
   end

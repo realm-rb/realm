@@ -8,14 +8,14 @@ module Realm
         @repo.define_singleton_method(:root) { ReadOnlyRelationWrapper.new(super()) }
       end
 
-      def method_missing(name, *args, &block)
-        @repo.send(name, *args, &block)
+      def method_missing(...)
+        @repo.send(...)
       rescue Persistence::RelationIsReadOnly
         raise Persistence::RepositoryIsReadOnly, @repo
       end
 
-      def respond_to_missing?(*args)
-        @repo.respond_to?(*args)
+      def respond_to_missing?(...)
+        @repo.respond_to?(...)
       end
     end
   end

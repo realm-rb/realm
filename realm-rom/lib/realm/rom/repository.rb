@@ -11,15 +11,15 @@ module Realm
           @repo = repo
         end
 
-        def method_missing(*args, &block)
-          result = @repo.send(*args, &block)
+        def method_missing(...)
+          result = @repo.send(...)
           result.is_a?(::ROM::Relation) ? result.to_a : result
         rescue ::ROM::SQL::UniqueConstraintError
           raise Realm::Persistence::Conflict
         end
 
-        def respond_to_missing?(*args)
-          @repo.respond_to?(*args)
+        def respond_to_missing?(...)
+          @repo.respond_to?(...)
         end
       end
 

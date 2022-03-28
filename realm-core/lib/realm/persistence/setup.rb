@@ -10,7 +10,7 @@ module Realm
       end
 
       def gateway
-        @gateway ||= @gateway_class.new(gateway_config)
+        @gateway ||= @gateway_class.new(**gateway_config)
       end
 
       def register_repos(container)
