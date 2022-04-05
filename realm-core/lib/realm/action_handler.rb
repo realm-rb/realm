@@ -4,7 +4,7 @@ require 'dry-validation'
 
 module Realm
   class ActionHandler
-    extend Mixins::ContextInjection::ClassMethods
+    include Mixins::ContextInjection
     include Mixins::AggregateMember
     include Mixins::RepositoryHelper
 

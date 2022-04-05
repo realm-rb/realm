@@ -10,29 +10,29 @@ module Realm
       module ClassMethods
         def new(*args, **kwargs, &block)
           instance = allocate
-          deps.each { |d| define_dependency_method(instance, kwargs, d) }
-          kwargs_without_dependencies = kwargs.reject { |k, _| deps.any? { |d| d.name == k } }
+          _dependencies.each { |d| define_dependency_method(instance, kwargs, d) }
+          kwargs_without_dependencies = kwargs.reject { |k, _| _dependencies.any? { |d| d.name == k } }
           instance.send(:initialize, *args, **kwargs_without_dependencies, &block)
           instance
         end
 
         def inject(*dependables, **options)
-          deps.concat(dependables.map { |d| Dependency.new(d, **options) })
+          _dependencies.concat(dependables.map { |d| Dependency.new(d, **options) })
         end
 
         def dependencies
-          deps.freeze
+          _dependencies.freeze
         end
 
         def inherited(subclass)
-          subclass.instance_variable_set(:@deps, @deps.dup)
+          subclass.instance_variable_set(:@dependencies, _dependencies.dup)
           super
         end
 
         private
 
-        def deps
-          @deps ||= []
+        def _dependencies
+          @dependencies ||= []
         end
 
         def define_dependency_method(instance, kwargs, spec)

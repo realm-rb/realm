@@ -106,7 +106,6 @@ RSpec.describe Realm::EventRouter do
       end
 
       it 'triggers auto registration of event handlers' do
-        # require 'pry'; binding.pry
         expect(gateway2).to receive(:register).with(handler1)
         subject.active_queues
       end
