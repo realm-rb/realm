@@ -28,18 +28,19 @@ end
 
 class TestAggregate < Realm::Aggregate
   root TestModel
-  command_methods :do_something
 
   def do_something(foo)
     emit TestEvent, foo: foo
   end
 
-  def event_broker
-    TestEventBroker
-  end
-
   on TestEvent do |root, event|
     root.bar = event.foo
+  end
+
+  private
+
+  def event_broker
+    TestEventBroker
   end
 end
 
@@ -47,10 +48,6 @@ end
 RSpec.describe Realm::Aggregate do
   context 'blank instance' do
     subject { TestAggregate.new }
-
-    it 'holds root instance' do
-      expect(subject.root).to be_a TestModel
-    end
 
     it 'handles external event' do
       event = TestEvent.new(foo: 'value1')
@@ -65,6 +62,24 @@ RSpec.describe Realm::Aggregate do
       expect(ingest_calls[0][0]).to be_a TestEvent
       expect(ingest_calls[0][0].foo).to eq 'value1'
       expect(subject.root.bar).to eq 'value1'
+    end
+  end
+
+  describe '.root' do
+    it 'registers root class' do
+      klass = Class.new(Realm::Aggregate) do
+        root TestModel
+      end
+      expect(klass.new.root).to be_a TestModel
+    end
+
+    it 'registers root class with alias' do
+      klass = Class.new(Realm::Aggregate) do
+        root TestModel, as: :my_model
+      end
+      aggregate = klass.new
+      expect(aggregate.my_model).to be_a TestModel
+      expect(aggregate.root).to eq aggregate.my_model
     end
   end
 end

@@ -73,23 +73,18 @@ module Realm
         @handled_event_classes ||= event_handlers.keys.uniq.freeze
       end
 
-      def inherited(subclass)
-        subclass.extend(SubclassMethods)
-        super
-      end
-
       private
 
       def root(root_class, as: nil)
         @root_class = root_class
-        @root_name = as || root_class.name.underscore.to_sym
-      end
-
-      def command_methods(*methods)
-        @command_methods = methods
+        if as
+          raise "There is already #{self}##{as} defined, cannot be used as root alias" if method_defined?(as)
+          alias_method as, :root
+        end
       end
 
       def on(*event_classes, &block)
+        # TODO: would need instance_exec scope to see injected dependencies
         handler = Aggregate::EventHandler.new(&block)
         event_classes.each do |klass|
           event_handlers[klass] << handler

@@ -44,14 +44,14 @@ module Realm
       end
 
       def handle(root, *args, **kwargs)
-        return @handler_block.(root, *args, applier: method(:apply), **kwargs) if @handler_block
+        return @handler_block.(root, *args, emitter: method(:emit), **kwargs) if @handler_block
 
         raise NotImplementedError
       end
 
       private
 
-      def apply(event, **attributes)
+      def emit(event, **attributes)
         event = event.new(**attributes) if event.is_a?(Class)
         @outbox << event
       end

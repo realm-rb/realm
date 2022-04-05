@@ -17,8 +17,9 @@ module Realm
     extend ClassMethods
     include Mixins::DependencyInjection
 
-    # inject EventBroker, static: true
     attr_reader :root
+
+    # inject EventBroker, static: true
 
     def initialize(root = new_root)
       self.class.discover
@@ -34,7 +35,7 @@ module Realm
     def emit(event, sync_self: true, **attributes)
       event = event.new(**attributes) if event.is_a?(Class)
       apply(event) if sync_self
-      event_broker.apply(event, skip: sync_self ? self.class : [])
+      event_broker.apply(event, except: sync_self ? self.class : [])
     end
 
     def new_root
