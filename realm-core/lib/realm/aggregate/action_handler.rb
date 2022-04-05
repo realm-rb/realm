@@ -28,24 +28,23 @@ module Realm
       attr_reader :root
 
       def self.call(root, ...)
-        new(root).(...)
+        new.(root, ...)
       end
 
-      def initialize(root, &block)
-        @root = root
+      def initialize(&block)
         @handler_block = block
       end
 
-      def call(...)
-        @outbox = Outbox.new
+      def call(root, ...)
+        @outbox = Outbox.new # FIX: not thread safe
         root.transaction do
-          handle(...)
+          handle(root, ...)
         end
         @outbox
       end
 
-      def handle(*args, **kwargs)
-        return @handler_block.(*args, root, applier: method(:apply), **kwargs) if @handler_block
+      def handle(root, *args, **kwargs)
+        return @handler_block.(root, *args, applier: method(:apply), **kwargs) if @handler_block
 
         raise NotImplementedError
       end

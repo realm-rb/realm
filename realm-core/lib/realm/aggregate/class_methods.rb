@@ -52,16 +52,17 @@ module Realm
             end
           elsif const < EventHandler
             const.handled_event_classes.each do |klass|
-              (_event_handlers[klass] ||= []) << const
+              event_handlers[klass] << const
             end
           end
         end
 
+        event_handlers.freeze
         @discovery_ran = true
       end
 
       def event_handlers
-        _event_handlers.freeze
+        @event_handlers ||= Hash.new { |h, k| h.frozen? ? [] : h[k] = [] }
       end
 
       def applicable?(event)
@@ -89,14 +90,10 @@ module Realm
       end
 
       def on(*event_classes, &block)
-        handler = Aggregate::ActionHandler.new(root, &block)
+        handler = Aggregate::EventHandler.new(&block)
         event_classes.each do |klass|
-          (_event_handlers[klass] ||= []) << handler
+          event_handlers[klass] << handler
         end
-      end
-
-      def _event_handlers
-        @event_handlers ||= {}
       end
     end
   end

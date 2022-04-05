@@ -25,11 +25,16 @@ module Realm
       @root = root
     end
 
+    def apply(event)
+      self.class.event_handlers[event.class].each { |handler| handler.(root, event) }
+    end
+
     private
 
-    def apply(event, **attributes)
+    def emit(event, sync_self: true, **attributes)
       event = event.new(**attributes) if event.is_a?(Class)
-      event_broker.ingest(event, sync_handlers: self.class.event_handlers)
+      apply(event) if sync_self
+      event_broker.apply(event, skip: sync_self ? self.class : [])
     end
 
     def new_root
