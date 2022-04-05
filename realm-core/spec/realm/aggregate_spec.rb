@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module AggregateSpec
-  class MyEventBroker
+  class TestBroker
     class << self
       attr_reader :ingest_calls
 
@@ -11,74 +11,74 @@ module AggregateSpec
     end
   end
 
-  class MyModel
-    attr_accessor :bar
+  class User
+    attr_accessor :name
 
     def transaction
       yield
     end
   end
 
-  class MyEvent
-    attr_reader :foo
+  class UserNameChanged
+    attr_reader :name
 
-    def initialize(foo:)
-      @foo = foo
+    def initialize(name:)
+      @name = name
     end
   end
 
-  class MyAggregate < Realm::Aggregate
-    root MyModel
+  class UserAggregate < Realm::Aggregate
+    root User
 
-    def do_something(foo)
-      emit MyEvent, foo: foo
+    def change_name(name)
+      emit UserNameChanged, name: name
     end
 
-    on MyEvent do |root, event|
-      root.bar = event.foo
+    on UserNameChanged do |root, event|
+      root.name = event.name
     end
 
     private
 
     def event_broker
-      MyEventBroker
+      TestBroker
     end
   end
 
   RSpec.describe Realm::Aggregate do
     context 'blank instance' do
-      subject { MyAggregate.new }
+      subject { UserAggregate.new }
 
       it 'handles external event' do
-        event = MyEvent.new(foo: 'value1')
+        event = UserNameChanged.new(name: 'value1')
         subject.apply(event)
-        expect(subject.root.bar).to eq 'value1'
+        expect(subject.root.name).to eq 'value1'
       end
 
       it 'handles simple command -> event flow' do
-        subject.do_something('value1')
-        ingest_calls = MyEventBroker.ingest_calls
+        subject.change_name('value1')
+        ingest_calls = TestBroker.ingest_calls
         expect(ingest_calls.size).to eq 1
-        expect(ingest_calls[0][0]).to be_a MyEvent
-        expect(ingest_calls[0][0].foo).to eq 'value1'
-        expect(subject.root.bar).to eq 'value1'
+        expect(ingest_calls[0][0]).to be_a UserNameChanged
+        expect(ingest_calls[0][0].name).to eq 'value1'
+        expect(subject.root.name).to eq 'value1'
       end
     end
 
     describe '.root' do
       it 'registers root class' do
         klass = Class.new(Realm::Aggregate) do
-          root MyModel
+          root User
         end
-        expect(klass.new.root).to be_a MyModel
+        expect(klass.new.root).to be_a User
       end
 
       it 'registers root class with alias' do
         klass = Class.new(Realm::Aggregate) do
-          root MyModel, as: :my_model
+          root User, as: :my_model
         end
         aggregate = klass.new
-        expect(aggregate.my_model).to be_a MyModel
+        expect(aggregate.my_model).to be_a User
         expect(aggregate.root).to eq aggregate.my_model
       end
     end
